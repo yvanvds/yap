@@ -10,51 +10,33 @@ namespace YapView
 {
   public class Object
   {
-    SKPaint objectPaint = new SKPaint()
-    {
-      Style = SKPaintStyle.StrokeAndFill,
-      Color = SKColors.AntiqueWhite,
-      
-    };
-
-    SKPaint objectBorderPaint = new SKPaint()
-    {
-      Style = SKPaintStyle.Stroke,
-      Color = SKColors.Black,
-    };
-
-    SKPaint objectBorderSelectedPaint = new SKPaint()
-    {
-      Style = SKPaintStyle.Stroke,
-      Color = SKColors.Green,
-    };
-
-    SKPaint greenPaint = new SKPaint()
-    {
-      Style = SKPaintStyle.Fill,
-      Color = SKColors.Green
-    };
-
-    SKPaint textPaint = new SKPaint()
-    {
-      Color = SKColors.Black,
-      Typeface = SKTypeface.FromFamilyName("consolas"),
-      TextSize = 12
-    };
+    
 
     SKRect rect;
     SKSize size;
 
-    public Object(float left, float top)
+    List<SKRect> input = new List<SKRect>();
+    public int Inputs
     {
-      rect = new SKRect();
-      size = new SKSize(100f, 20f);
-      
-      rect.Left = left;
-      rect.Top = top;
-      rect.Size = size;
-
+      get => input.Capacity;
+      set
+      {
+        input = new List<SKRect>(value);
+        UpdateLayout();
+      }
     }
+
+    List<SKRect> output = new List<SKRect>();
+    public int Outputs
+    {
+      get => output.Capacity;
+      set
+      {
+        output = new List<SKRect>(value);
+        UpdateLayout();
+      }
+    }
+
 
     String text = "";
     public String Text
@@ -63,16 +45,30 @@ namespace YapView
       set
       {
         text = value;
-        float width = 8 + textPaint.MeasureText(Text);
+        float width = 8 + Paint.Text.MeasureText(Text);
         if (width < 80) width = 80;
-        Resize(width, size.Height);
+        size.Width = width;
+        UpdateLayout();
       }
     }
 
     public bool Selected { get; set; }
     public bool EditMode { get; set; }
+    public bool Hover { get; set; }
 
-    public bool IsInside(Point pos)
+    public int CarretPos { get; set; } = 0;
+
+    public Object(SKPoint pos)
+    {
+      rect = new SKRect();
+      size = new SKSize(100f, 20f);
+
+      rect.Left = (float)pos.X;
+      rect.Top = (float)pos.Y;
+      rect.Size = size;
+    }
+
+    public bool IsInside(SKPoint pos)
     {
       if(pos.X > rect.Left && pos.X < rect.Left + rect.Width)
       {
@@ -83,30 +79,177 @@ namespace YapView
       }
       return false;
     }
-    
+
+    public int OnInput(SKPoint pos)
+    {
+      for(int i = 0; i < input.Count; i++)
+      {
+        if(pos.X >= input[i].Left - 5 && pos.X <= input[i].Left + input[i].Width + 5)
+        {
+          if(pos.Y >= input[i].Top - 5 && pos.Y <= input[i].Top + input[i].Height + 5)
+          {
+            return i;
+          }
+        }
+      }
+      return -1;
+    }
+
+    public int OnOutput(SKPoint pos)
+    {
+      for (int i = 0; i < output.Count; i++)
+      {
+        if (pos.X >= output[i].Left - 5 && pos.X <= output[i].Left + output[i].Width + 5)
+        {
+          if (pos.Y >= output[i].Top - 5 && pos.Y <= output[i].Top + output[i].Height + 5)
+          {
+            return i;
+          }
+        }
+      }
+      return -1;
+    }
+
+    public int FindCarretPos(SKPoint pos)
+    {
+      string s = Text;
+      float length = Paint.Text.MeasureText(s);
+      while(s.Length > 0 && pos.X < rect.Left + 4 + length)
+      {
+        s = s.Remove(s.Length - 1);
+        length = Paint.Text.MeasureText(s);
+      }
+      return s.Length;
+    }
 
     public void Draw(SKCanvas canvas)
     {
-      canvas.DrawRect(rect, objectPaint);
+      
       if(Selected)
       {
-        canvas.DrawRect(rect, objectBorderSelectedPaint);
-      } else
+        canvas.DrawRect(rect, Paint.ObjectFillSelected);
+        canvas.DrawRect(rect, Paint.ObjectBorderSelected);
+      }
+      else if(Hover)
       {
-        canvas.DrawRect(rect, objectBorderPaint);
+        canvas.DrawRect(rect, Paint.ObjectFill);
+        canvas.DrawRect(rect, Paint.ObjectBorderHovered);
+      }
+      else
+      {
+        canvas.DrawRect(rect, Paint.ObjectFill);
+        canvas.DrawRect(rect, Paint.ObjectBorder);
       }
 
-      canvas.DrawLine(rect.Left, rect.Top + 3, rect.Right, rect.Top + 3, objectBorderPaint);
-      canvas.DrawLine(rect.Left, rect.Bottom - 3, rect.Right, rect.Bottom - 3, objectBorderPaint);
+      canvas.DrawLine(rect.Left, rect.Top + 3, rect.Right, rect.Top + 3, Paint.ObjectBorder);
+      canvas.DrawLine(rect.Left, rect.Bottom - 3, rect.Right, rect.Bottom - 3, Paint.ObjectBorder);
 
-      canvas.DrawText(Text, rect.Left + 4, rect.Top + 15, textPaint);
+      foreach(var rect in input)
+      {
+        canvas.DrawRect(rect, Paint.Pin);
+      }
+
+      foreach(var rect in output)
+      {
+        canvas.DrawRect(rect, Paint.Pin);
+      }
+
+      canvas.DrawText(Text, rect.Left + 4, rect.Top + 15, Paint.Text);
+
+      if(EditMode)
+      {
+        string s = Text;
+        if (CarretPos < Text.Length) s = s.Remove(CarretPos);
+        float xPos = rect.Left + 4 + Paint.Text.MeasureText(s);
+        canvas.DrawLine(xPos, rect.Top + 5, xPos, rect.Bottom - 4, Paint.Carret);
+      }
     }
 
-    private void Resize(float width, float height)
+    public void Move(SKPoint delta)
     {
-      size.Width = width;
-      size.Height = height;
+      rect.Left = rect.Left + delta.X;
+      rect.Top = rect.Top + delta.Y;
       rect.Size = size;
+      UpdateLayout();
+    }
+
+    public SKPoint GetOutputPos(int pin)
+    {
+      SKPoint p = new SKPoint();
+      if (pin < output.Count)
+      {
+        p.X = output[pin].MidX;
+        p.Y = output[pin].MidY;
+      }
+      return p;
+    }
+
+    public SKPoint GetInputPos(int pin)
+    {
+      SKPoint p = new SKPoint();
+      if (pin < input.Count)
+      {
+        p.X = input[pin].MidX;
+        p.Y = input[pin].MidY;
+      }
+      return p;
+    }
+
+    private void UpdateLayout()
+    { 
+      rect.Size = size;
+
+      {
+        // calculate inputs
+        float inputWidth = 10;
+        float inputHeight = 3;
+        float blankSpace = 0;
+        float left = rect.Left;
+        float top = rect.Top;
+
+
+        if (Inputs > 1)
+        {
+          blankSpace = ((size.Width + 1) - (inputWidth * Inputs)) / (Inputs - 1);
+        }
+        input.Clear();
+        for (int i = 0; i < input.Capacity; i++)
+        {
+          SKRect r = new SKRect();
+          r.Left = left;
+          r.Top = top;
+          r.Size = new SKSize(inputWidth, inputHeight);
+          input.Add(r);
+
+          left += inputWidth + blankSpace;
+        }
+      }
+
+      {
+        // calculate outputs
+        float outputWidth = 10;
+        float outputHeight = 3;
+        float blankSpace = 0;
+        float left = rect.Left;
+        float top = rect.Bottom - 3;
+
+
+        if (Outputs > 1)
+        {
+          blankSpace = (size.Width - (outputWidth * Outputs)) / (Outputs - 1);
+        }
+        output.Clear();
+        for (int i = 0; i < output.Capacity; i++)
+        {
+          SKRect r = new SKRect();
+          r.Left = left;
+          r.Top = top;
+          r.Size = new SKSize(outputWidth, outputHeight);
+          output.Add(r);
+
+          left += outputWidth + blankSpace;
+        }
+      }
     }
   }
 }

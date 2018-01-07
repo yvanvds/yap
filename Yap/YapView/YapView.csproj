@@ -62,7 +62,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Connection.cs" />
+    <Compile Include="MathTools.cs" />
     <Compile Include="Object.cs" />
+    <Compile Include="Paint.cs" />
     <Compile Include="StringEditor.cs" />
     <Compile Include="YapView.cs">
       <SubType>Code</SubType>

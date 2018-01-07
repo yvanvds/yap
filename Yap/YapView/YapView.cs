@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -17,35 +19,7 @@ using SkiaSharp.Views.Desktop;
 
 namespace YapView
 {
-  /// <summary>
-  /// Follow steps 1a or 1b and then 2 to use this custom control in a XAML file.
-  ///
-  /// Step 1a) Using this custom control in a XAML file that exists in the current project.
-  /// Add this XmlNamespace attribute to the root element of the markup file where it is 
-  /// to be used:
-  ///
-  ///     xmlns:MyNamespace="clr-namespace:YapView"
-  ///
-  ///
-  /// Step 1b) Using this custom control in a XAML file that exists in a different project.
-  /// Add this XmlNamespace attribute to the root element of the markup file where it is 
-  /// to be used:
-  ///
-  ///     xmlns:MyNamespace="clr-namespace:YapView;assembly=YapView"
-  ///
-  /// You will also need to add a project reference from the project where the XAML file lives
-  /// to this project and Rebuild to avoid compilation errors:
-  ///
-  ///     Right click on the target project in the Solution Explorer and
-  ///     "Add Reference"->"Projects"->[Select this project]
-  ///
-  ///
-  /// Step 2)
-  /// Go ahead and use your control in the XAML file.
-  ///
-  ///     <MyNamespace:CustomControl1/>
-  ///
-  /// </summary>
+
   public class YapView : SkiaSharp.Views.WPF.SKElement
   {
     static YapView()
@@ -53,24 +27,32 @@ namespace YapView
       DefaultStyleKeyProperty.OverrideMetadata(typeof(YapView), new FrameworkPropertyMetadata(typeof(YapView)));
     }
 
-    SKPaint bluePaint = new SKPaint()
-    {
-      Style = SKPaintStyle.Fill,
-      Color = SKColors.Blue
-    };
+    ObservableCollection<Object> Objects = new ObservableCollection<Object>();
+    ObservableCollection<Connection> Connections = new ObservableCollection<Connection>();
 
-    Object o;
-    Object current = null;
+    Object currentObj = null;
+    Connection currentConn = null;
 
-    float Width = 0f;
-    float Height = 0f;
+    Object objectBelowMouse = null;
+    Connection connectionBelowMouse = null;
 
     StringEditor SEdit = new StringEditor();
 
+    bool MouseIsDown = false;
+    SKPoint MousePos = new SKPoint();
+
+    DispatcherTimer UpdateCanvas = new DispatcherTimer(DispatcherPriority.Render);
+
     public YapView()
     {
-      o = new Object(100f, 100f);
-      o.Text = "Hello is a bit short";
+      UpdateCanvas.Interval = new TimeSpan(0, 0, 0, 0, 50);
+      UpdateCanvas.Tick += new EventHandler(UpdateCanvas_Elapsed);
+      UpdateCanvas.Start();
+    }
+
+    private void UpdateCanvas_Elapsed(object sender, EventArgs e)
+    {
+      InvalidateVisual();
     }
 
     protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
@@ -78,47 +60,226 @@ namespace YapView
       SKSurface surface = e.Surface;
       SKCanvas canvas = surface.Canvas;
 
-      Width = e.Info.Width;
-      Height = e.Info.Height;
-
       canvas.Clear(SKColors.DimGray);
 
-      o.Draw(canvas);
+      foreach(var obj in Objects)
+      {
+        obj.Draw(canvas);
+      }
+
+      foreach(var obj in Connections)
+      {
+        obj.Draw(canvas);
+      }
     }
 
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
-      Point pos = e.GetPosition(this);
-      pos.X = pos.X / RenderSize.Width * Width;
-      pos.Y = pos.Y / RenderSize.Height * Height;
-      if(o.IsInside(pos))
+      SKPoint pos = new SKPoint();
+      pos.X = (float)e.GetPosition(this).X;
+      pos.Y = (float)e.GetPosition(this).Y;
+
+      if(objectBelowMouse != null)
       {
-        if(o.Selected)
+        currentObj = objectBelowMouse;
+        if (currentObj.Selected)
         {
-          o.EditMode = true;
-          SEdit.Edit(current.Text, 0);
+          if (StartConnection(pos))
+          {
+            currentObj.Selected = false;
+            currentObj = null;
+          }
+          else
+          {
+            currentObj.EditMode = true;
+            int carretPos = currentObj.FindCarretPos(pos);
+            SEdit.Edit(currentObj.Text, carretPos);
+            currentObj.CarretPos = carretPos;
+          }
         } else
         {
-          o.Selected = true;
+          currentObj.Selected = true;
+          int index = Objects.IndexOf(currentObj);
+          Objects.Move(index, Objects.Count - 1);
         }
-        current = o;
-        InvalidateVisual();
       } else
       {
-        o.EditMode = false;
-        o.Selected = false;
-        current = null;
-        InvalidateVisual();
+        if (currentObj != null)
+        {
+          currentObj.Selected = false;
+          currentObj.EditMode = false;
+          currentObj = null;
+        }
       }
+
+      MouseIsDown = true;
+      MousePos = pos;
       e.Handled = true;
+    }
+
+    private bool StartConnection(SKPoint pos)
+    {
+      int pin = currentObj.OnOutput(pos);
+      if(pin != -1)
+      {
+        Connections.Add(new Connection());
+        currentConn = Connections.Last();
+        currentConn.SetStart(currentObj, pin);
+        return true;
+      }
+      return false;
+    }
+
+    protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+    {
+      if(currentConn != null)
+      {
+        SKPoint pos = new SKPoint();
+        pos.X = (float)e.GetPosition(this).X;
+        pos.Y = (float)e.GetPosition(this).Y;
+
+        foreach (var obj in Objects)
+        {
+          if(obj.IsInside(pos))
+          {
+            int pin = obj.OnInput(pos);
+            if(pin == -1 &&obj.Inputs > 0)
+            {
+              pin = 0;
+            }
+            if (pin == -1)
+            {
+              Connections.Remove(currentConn);
+              currentConn = null;
+              break;
+            }
+            else
+            {
+              currentConn.SetEnd(obj, pin);
+              currentConn = null;
+              break;
+            }
+          }
+        }
+        if(currentConn != null)
+        {
+          Connections.Remove(currentConn);
+          currentConn = null;
+        }
+        //InvalidateVisual();
+      }
+      MouseIsDown = false;
+      e.Handled = true;
+    }
+
+    protected override void OnMouseMove(MouseEventArgs e)
+    {
+      SKPoint pos = new SKPoint();
+      pos.X = (float)e.GetPosition(this).X;
+      pos.Y = (float)e.GetPosition(this).Y;
+
+      // find object below mouse
+      objectBelowMouse = null;
+      if(Objects.Count > 0)
+      {
+        bool HoverFound = false;
+        for(int i = Objects.Count - 1; i >= 0; i--)
+        {
+          if(!HoverFound)
+          {
+            if (Objects[i].IsInside(pos))
+            {
+              objectBelowMouse = Objects[i];
+              HoverFound = true;
+            }
+          }
+          Objects[i].Hover = false;
+        }
+      }
+
+      // find connection below mouse
+      connectionBelowMouse = null;
+      if(Connections.Count > 0)
+      {
+        Connection nearest = Connections[0];
+        float nearestDist = float.MaxValue;
+        foreach (var obj in Connections)
+        {
+          obj.Hover = false;
+          if (obj.Complete)
+          {
+            float dist = obj.DistanceToPos(pos);
+            if(dist < nearestDist)
+            {
+              nearestDist = dist;
+              nearest = obj;
+            }
+          }
+        }
+
+        if(nearestDist < 5)
+        {
+          connectionBelowMouse = nearest;
+        }
+      }
+
+      // connections get precendence on hover
+      if(connectionBelowMouse != null)
+      {
+        objectBelowMouse = null;
+        connectionBelowMouse.Hover = true;
+      } else if(objectBelowMouse != null)
+      {
+        objectBelowMouse.Hover = true;
+      }
+      
+
+      if(MouseIsDown)
+      {
+        if(currentObj != null)
+        {
+          SKPoint delta = (pos - MousePos);
+          currentObj.Move(delta);
+          //InvalidateVisual();
+        } else if (currentConn != null)
+        {
+          currentConn.SetMousePos(e.GetPosition(this));
+          //InvalidateVisual();
+        }
+        e.Handled = true;
+      }
+      // important: we also need the mouse position to add new objects
+      MousePos = pos;
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
-      if(current != null && current.EditMode == true)
+      if(currentObj != null && currentObj.EditMode == true)
       {
-        current.Text = SEdit.Update(e.Key);
-        InvalidateVisual();
+        currentObj.Text = SEdit.Update(e.Key);
+        currentObj.CarretPos = SEdit.Pos;
+        //InvalidateVisual();
+      } else
+      {
+        if(currentObj != null && (e.Key == Key.Delete || e.Key == Key.Back))
+        {
+          Objects.Remove(currentObj);
+          currentObj = null;
+          //InvalidateVisual();
+        }
+
+        else if (e.Key == Key.O)
+        {
+          Objects.Add(new Object(MousePos));
+          currentObj = Objects.Last();
+          currentObj.Inputs = 3;
+          currentObj.Outputs = 3;
+          currentObj.Selected = true;
+          currentObj.EditMode = true;
+          SEdit.Edit(currentObj.Text, 0);
+          currentObj.CarretPos = 0;
+          //InvalidateVisual();
+        }
       }
     }
   }

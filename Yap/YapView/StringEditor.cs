@@ -10,7 +10,7 @@ namespace YapView
   public class StringEditor
   {
     string Content;
-    int Pos;
+    public int Pos { get; set; }
     IoCmd_t data;
 
     public void Edit(string content, int position)
@@ -43,6 +43,12 @@ namespace YapView
           {
             Content = Content.Remove(Pos - 1, 1);
             Pos--;
+          }
+        } else if(data.delete)
+        {
+          if(Pos < Content.Length)
+          {
+            Content = Content.Remove(Pos, 1);
           }
         }
       }
@@ -85,10 +91,18 @@ namespace YapView
       KeyDecode.backspace = false;
       KeyDecode.arrowLeft = false;
       KeyDecode.arrowRight = false;
+      KeyDecode.delete = false;
 
       if (key == Key.Back)
       {
         KeyDecode.backspace = true;
+        KeyDecode.printable = false;
+        return;
+      }
+
+      if (key == Key.Delete)
+      {
+        KeyDecode.delete = true;
         KeyDecode.printable = false;
         return;
       }
@@ -197,6 +211,7 @@ namespace YapView
     public bool ctrl;
     public bool alt;
     public bool backspace;
+    public bool delete;
     public bool arrowLeft;
     public bool arrowRight;
     public int type; //sideband
