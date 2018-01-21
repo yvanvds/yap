@@ -10,7 +10,10 @@ namespace YapView
 {
   public class Object
   {
-    
+    public IYapHandler Handler { get; set; }
+    public object handle = null;
+    string currentObjectName = "";
+
 
     SKRect rect;
     SKSize size;
@@ -54,18 +57,91 @@ namespace YapView
 
     public bool Selected { get; set; }
     public bool EditMode { get; set; }
+
+    public bool HasChanged()
+    {
+      return !Text.Equals(currentObjectName);
+    }
+
+    public bool Reconfigure() {
+      // separate object name from arguments
+      string[] original = currentObjectName.Split(' ');
+      string[] newText = Text.Split(' ');
+      currentObjectName = Text;
+      bool objectIsReplaced = false;
+
+      if (handle != null)
+      {
+        if(newText.Length > 0)
+        {
+          // reconstruct object if name is different
+          if(!original[0].Equals(newText[0]))
+          {
+            Handler.DeleteObject(handle);
+            handle = Handler.CreateObject(Text);
+            objectIsReplaced = true;
+          }
+        } else
+        {
+          Handler.DeleteObject(handle);
+          handle = null;
+          objectIsReplaced = true;
+        }
+      } else
+      {
+        // handle is null, create a new object if possible
+        if(newText.Length > 0)
+        {
+          handle = Handler.CreateObject(newText[0]);
+          objectIsReplaced = true;
+        }
+      }
+
+      if (handle != null)
+      {
+        // pass arguments
+        for (uint i = 1; i < newText.Length; i++)
+        {
+          float arg;
+          if (float.TryParse(newText[i], out arg))
+          {
+            Handler.PassArgument(handle, i - 1, arg);
+          }
+        }
+
+        // set inlets and outlets
+        Inputs = Handler.GetObjectInputCount(handle);
+        Outputs = Handler.GetObjectOutputCount(handle);
+      } else
+      {
+        Inputs = 0;
+        Outputs = 0;
+      }
+      UpdateLayout();
+
+      return objectIsReplaced;
+    }
+
     public bool Hover { get; set; }
 
     public int CarretPos { get; set; } = 0;
 
-    public Object(SKPoint pos)
+    public Object(SKPoint pos, IYapHandler handler)
     {
+      Handler = handler;
       rect = new SKRect();
-      size = new SKSize(100f, 20f);
+      size = new SKSize(100f, 25f);
 
       rect.Left = (float)pos.X;
       rect.Top = (float)pos.Y;
       rect.Size = size;
+
+      Inputs = 0;
+      Outputs = 0;
+      Selected = true;
+      EditMode = true;
+
+      CarretPos = 0;
     }
 
     public bool IsInside(SKPoint pos)
@@ -99,9 +175,9 @@ namespace YapView
     {
       for (int i = 0; i < output.Count; i++)
       {
-        if (pos.X >= output[i].Left - 5 && pos.X <= output[i].Left + output[i].Width + 5)
+        if (pos.X >= output[i].Left && pos.X <= output[i].Left + output[i].Width)
         {
-          if (pos.Y >= output[i].Top - 5 && pos.Y <= output[i].Top + output[i].Height + 5)
+          if (pos.Y >= output[i].Top && pos.Y <= output[i].Top + output[i].Height)
           {
             return i;
           }
@@ -141,8 +217,8 @@ namespace YapView
         canvas.DrawRect(rect, Paint.ObjectBorder);
       }
 
-      canvas.DrawLine(rect.Left, rect.Top + 3, rect.Right, rect.Top + 3, Paint.ObjectBorder);
-      canvas.DrawLine(rect.Left, rect.Bottom - 3, rect.Right, rect.Bottom - 3, Paint.ObjectBorder);
+      canvas.DrawLine(rect.Left, rect.Top + 5, rect.Right, rect.Top + 5, Paint.ObjectBorder);
+      canvas.DrawLine(rect.Left, rect.Bottom - 5, rect.Right, rect.Bottom - 5, Paint.ObjectBorder);
 
       foreach(var rect in input)
       {
@@ -154,7 +230,7 @@ namespace YapView
         canvas.DrawRect(rect, Paint.Pin);
       }
 
-      canvas.DrawText(Text, rect.Left + 4, rect.Top + 15, Paint.Text);
+      canvas.DrawText(Text, rect.Left + 4, rect.Top + 17, Paint.Text);
 
       if(EditMode)
       {
@@ -202,7 +278,7 @@ namespace YapView
       {
         // calculate inputs
         float inputWidth = 10;
-        float inputHeight = 3;
+        float inputHeight = 5;
         float blankSpace = 0;
         float left = rect.Left;
         float top = rect.Top;
@@ -228,10 +304,10 @@ namespace YapView
       {
         // calculate outputs
         float outputWidth = 10;
-        float outputHeight = 3;
+        float outputHeight = 5;
         float blankSpace = 0;
         float left = rect.Left;
-        float top = rect.Bottom - 3;
+        float top = rect.Bottom - 5;
 
 
         if (Outputs > 1)

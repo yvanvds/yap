@@ -16,6 +16,8 @@ namespace YapView
     Object End = null;
     int EndPin;
 
+    IYapHandler handler;
+
     SKPoint mousePos = new SKPoint();
     SKPoint closest = new SKPoint();
 
@@ -23,6 +25,12 @@ namespace YapView
     public bool Complete { get => isComplete; }
 
     public bool Hover { get; set; } = false;
+    public bool Selected { get; set; } = false;
+
+    public Connection(IYapHandler handler)
+    {
+      this.handler = handler;
+    }
 
     public void SetStart(Object obj, int pin)
     {
@@ -31,11 +39,23 @@ namespace YapView
       isComplete = false;
     }
 
+    public bool IsStart(Object obj)
+    {
+      return Start == obj;
+    }
+
     public void SetEnd(Object obj, int pin)
     {
       End = obj;
       EndPin = pin;
       isComplete = true;
+
+      handler.Connect(Start.handle, StartPin, End.handle, EndPin);
+    }
+
+    public bool IsConnected(Object obj)
+    {
+      return (End == obj || Start == obj);
     }
 
     public void SetMousePos(Point pos)
@@ -54,15 +74,16 @@ namespace YapView
     {
       SKPoint start = Start.GetOutputPos(StartPin);
       SKPoint end;
-      if(isComplete)
+      if (isComplete)
       {
         end = End.GetInputPos(EndPin);
-      } else
+      }
+      else
       {
         end = mousePos;
       }
 
-      if(Hover)
+      if (Hover || Selected)
       {
         canvas.DrawLine(start.X, start.Y, end.X, end.Y, Paint.ConnectionHover);
       }
@@ -72,9 +93,18 @@ namespace YapView
       }
     }
 
+    public void Disconnect()
+    {
+      if (isComplete)
+      {
+        handler.Disconnnect(Start.handle, StartPin, End.handle, EndPin);
+      }
+      isComplete = false;
+    }
+
     ~Connection()
     {
-
+      Disconnect();
     }
   }
 }

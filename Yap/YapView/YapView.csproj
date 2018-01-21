@@ -63,8 +63,11 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Connection.cs" />
+    <Compile Include="Connections.cs" />
+    <Compile Include="IYapHandler.cs" />
     <Compile Include="MathTools.cs" />
     <Compile Include="Object.cs" />
+    <Compile Include="Objects.cs" />
     <Compile Include="Paint.cs" />
     <Compile Include="StringEditor.cs" />
     <Compile Include="YapView.cs">
