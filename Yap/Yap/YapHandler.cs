@@ -46,9 +46,9 @@ namespace Yap
         return ((IHandle)name).Outputs;
     }
 
-    public void PassArgument(object obj, uint pos, float value)
+    public void PassArgument(object name, string args)
     {
-      ((IHandle)obj).SetParam(pos, value);
+      ((IHandle)name).SetArgs(args);
     }
   }
 }

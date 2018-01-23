@@ -17,6 +17,6 @@ namespace YapView
     void Connect(object start, int pinStart, object end, int pinEnd);
     void Disconnnect(object start, int pinStart, object end, int pinEnd);
 
-    void PassArgument(object obj, uint pos, float value);
+    void PassArgument(object obj, string args);
   }
 }

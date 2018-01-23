@@ -32,6 +32,7 @@ namespace Yap
     {
       InitializeComponent();
       YseObj.Log.Level = YSE.ERROR_LEVEL.DEBUG;
+      YseObj.Log.OnMessage += OnMessage;
 
       YseObj.System.Init();
       UpdateYSE.Interval = new TimeSpan(0, 0, 0, 0, 50);
@@ -67,6 +68,11 @@ namespace Yap
 
       patcher.Dispose();
       sound.Dispose();
+    }
+
+    private void OnMessage(string message)
+    {
+      log.Text = message + Environment.NewLine + log.Text;
     }
   }
 }

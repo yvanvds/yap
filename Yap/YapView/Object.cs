@@ -100,15 +100,15 @@ namespace YapView
       if (handle != null)
       {
         // pass arguments
-        for (uint i = 1; i < newText.Length; i++)
+        var args = currentObjectName.Split(new[] { ' ' }, 2);
+        if(args.Length > 1)
         {
-          float arg;
-          if (float.TryParse(newText[i], out arg))
-          {
-            Handler.PassArgument(handle, i - 1, arg);
-          }
+          Handler.PassArgument(handle, args[1]);
+        } else
+        {
+          Handler.PassArgument(handle, "");
         }
-
+        
         // set inlets and outlets
         Inputs = Handler.GetObjectInputCount(handle);
         Outputs = Handler.GetObjectOutputCount(handle);

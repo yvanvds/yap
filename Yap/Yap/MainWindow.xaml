@@ -6,8 +6,15 @@
         xmlns:yap="clr-namespace:YapView;assembly=YapView"
         xmlns:local="clr-namespace:Yap"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="800" Width="1000">
     <Grid>
-    <yap:YapView x:Name="yap"/>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="200"/>
+    </Grid.RowDefinitions>
+    <yap:YapView Grid.Row="0" x:Name="yap"/>
+
+    <TextBox Grid.Row="1" x:Name="log" IsEnabled="False" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible"/>
+
   </Grid>
 </Window>
