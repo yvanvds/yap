@@ -40,16 +40,24 @@ namespace YapView
       return false;
     }
 
-    public void Add(Object obj, int pin, SKPoint pos)
+    public void Add(Object obj, uint outlet, SKPoint pos)
     {
       List.Add(new Connection(handler));
       Current = List.Last();
-      Current.SetStart(obj, pin);
+      Current.SetStart(obj, outlet);
       Point p = new Point();
       p.X = pos.X;
       p.Y = pos.Y;
       Current.SetMousePos(p);
     }
+
+    public void Add(Object start, uint outlet, Object end, uint inlet)
+    {
+      List.Add(new Connection(handler));
+      List.Last().SetStart(start, outlet);
+      List.Last().SetEnd(end, inlet);
+    }
+
 
     public bool IsBeingCreated()
     {
@@ -66,6 +74,12 @@ namespace YapView
       }
     }
 
+    public void Clear()
+    {
+      List.Clear();
+      Current = null;
+    }
+
     public void TrySetCurrentEnd(Object obj, SKPoint pos)
     {
       if (Current.IsStart(obj)) return;
@@ -80,7 +94,7 @@ namespace YapView
       }
       else
       {
-        Current.SetEnd(obj, pin);
+        Current.SetEnd(obj, (uint)pin);
         Current = null;
       }
     }

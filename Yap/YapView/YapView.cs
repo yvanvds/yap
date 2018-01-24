@@ -22,11 +22,6 @@ namespace YapView
 
   public class YapView : SkiaSharp.Views.WPF.SKElement
   {
-    static YapView()
-    {
-      DefaultStyleKeyProperty.OverrideMetadata(typeof(YapView), new FrameworkPropertyMetadata(typeof(YapView)));
-    }
-
     IYapHandler Handler = null;
     Connections Connections = null;
     Objects Objects = null;
@@ -38,6 +33,11 @@ namespace YapView
 
     DispatcherTimer UpdateCanvas = new DispatcherTimer(DispatcherPriority.Render);
 
+    static YapView()
+    {
+      DefaultStyleKeyProperty.OverrideMetadata(typeof(YapView), new FrameworkPropertyMetadata(typeof(YapView)));
+    }
+    
     public void Init(IYapHandler Handler)
     {
       this.Handler = Handler;
@@ -48,6 +48,67 @@ namespace YapView
       UpdateCanvas.Tick += new EventHandler(UpdateCanvas_Elapsed);
       UpdateCanvas.Start();
     }
+
+    public void Load(string JSONContent)
+    {
+      Connections.Clear();
+      Objects.Clear();
+      Handler.Clear();
+      Handler.Load(JSONContent);
+
+      uint num = Handler.NumObjects();
+
+      // load objects
+      for(uint i = 0; i < num; i++)
+      {
+        object obj = Handler.GetObjectFromList(i);
+        float x, y;
+        Handler.GetPosition(obj, out x, out y);
+        Object O = Objects.Add(new SKPoint(x, y), obj);
+        O.GetValuesFromHandle();
+      }
+
+      // load connections
+      foreach(Object O in Objects.List)
+      {
+        for(uint outlet = 0; outlet < O.Outputs; outlet++)
+        {
+          uint connections = Handler.GetConnections(O.handle, outlet);
+          for(uint j = 0; j < connections; j++)
+          {
+            uint ObjID = Handler.GetConnectionTarget(O.handle, outlet, j);
+            uint inlet = Handler.GetConnectionTargetInlet(O.handle, outlet, j);
+
+            Object I = Objects.GetObjectWithID(ObjID);
+            if(I != null)
+            {
+              Connections.Add(O, outlet, I, inlet);
+            }
+          }
+        }
+      }
+    }
+
+    public string Save()
+    {
+      Objects.StorePositions();
+      return Handler.Save();
+    }
+
+    private bool StartConnection(SKPoint pos)
+    {
+      int pin = Objects.Current.OnOutput(pos);
+      if (pin != -1)
+      {
+        Connections.Add(Objects.Current, (uint)pin, pos);
+        return true;
+      }
+      return false;
+    }
+
+    /*
+        DRAW
+    */
 
     private void UpdateCanvas_Elapsed(object sender, EventArgs e)
     {
@@ -65,6 +126,9 @@ namespace YapView
       Connections.Draw(canvas);
     }
 
+    /*
+        EVENTS
+    */
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
       SKPoint pos = new SKPoint();
@@ -110,9 +174,9 @@ namespace YapView
         {
           Objects.EndEditMode();
 
-          if(Objects.Current.HasChanged())
+          if (Objects.Current.HasChanged())
           {
-            if(Objects.Current.Reconfigure())
+            if (Objects.Current.Reconfigure())
             {
               Connections.RemoveConnectedTo(Objects.Current);
             }
@@ -124,17 +188,6 @@ namespace YapView
       MouseIsDown = true;
       MousePos = pos;
       e.Handled = true;
-    }
-
-    private bool StartConnection(SKPoint pos)
-    {
-      int pin = Objects.Current.OnOutput(pos);
-      if (pin != -1)
-      {
-        Connections.Add(Objects.Current, pin, pos);
-        return true;
-      }
-      return false;
     }
 
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)

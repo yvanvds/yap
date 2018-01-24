@@ -11,10 +11,10 @@ namespace YapView
   public class Connection
   {
     Object Start = null;
-    int StartPin;
+    uint outlet;
 
     Object End = null;
-    int EndPin;
+    uint inlet;
 
     IYapHandler handler;
 
@@ -32,10 +32,10 @@ namespace YapView
       this.handler = handler;
     }
 
-    public void SetStart(Object obj, int pin)
+    public void SetStart(Object obj, uint outlet)
     {
       Start = obj;
-      StartPin = pin;
+      this.outlet = outlet;
       isComplete = false;
     }
 
@@ -44,13 +44,13 @@ namespace YapView
       return Start == obj;
     }
 
-    public void SetEnd(Object obj, int pin)
+    public void SetEnd(Object obj, uint inlet, bool connect = true)
     {
       End = obj;
-      EndPin = pin;
+      this.inlet = inlet;
       isComplete = true;
 
-      handler.Connect(Start.handle, StartPin, End.handle, EndPin);
+      if(connect) handler.Connect(Start.handle, this.outlet, End.handle, this.inlet);
     }
 
     public bool IsConnected(Object obj)
@@ -67,16 +67,16 @@ namespace YapView
     public float DistanceToPos(SKPoint pos)
     {
       if (!isComplete) return -1f;
-      return MathTools.FindDistance(Start.GetOutputPos(StartPin), End.GetInputPos(EndPin), pos, out closest);
+      return MathTools.FindDistance(Start.GetOutputPos(outlet), End.GetInputPos(inlet), pos, out closest);
     }
 
     public void Draw(SKCanvas canvas)
     {
-      SKPoint start = Start.GetOutputPos(StartPin);
+      SKPoint start = Start.GetOutputPos(outlet);
       SKPoint end;
       if (isComplete)
       {
-        end = End.GetInputPos(EndPin);
+        end = End.GetInputPos(inlet);
       }
       else
       {
@@ -97,7 +97,7 @@ namespace YapView
     {
       if (isComplete)
       {
-        handler.Disconnnect(Start.handle, StartPin, End.handle, EndPin);
+        handler.Disconnnect(Start.handle, outlet, End.handle, inlet);
       }
       isComplete = false;
     }

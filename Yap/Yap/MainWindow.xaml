@@ -9,12 +9,22 @@
         Title="MainWindow" Height="800" Width="1000">
     <Grid>
     <Grid.RowDefinitions>
+      <RowDefinition Height="20"/>
       <RowDefinition Height="*"/>
       <RowDefinition Height="200"/>
     </Grid.RowDefinitions>
-    <yap:YapView Grid.Row="0" x:Name="yap"/>
 
-    <TextBox Grid.Row="1" x:Name="log" IsEnabled="False" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible"/>
+    <Menu Grid.Row="0" Width="auto">
+      <MenuItem Header="_File">
+        <MenuItem x:Name="Load" Header="_Load" HorizontalAlignment="Left" Width="140" Click="Load_Click"/>
+        <MenuItem x:Name="Save" Header="_Save" HorizontalAlignment="Left" Width="140" Click="Save_Click"/>
+        <MenuItem x:Name="Exit" Header="E_xit" HorizontalAlignment="Left" Width="140" Click="Exit_Click"/>
+      </MenuItem>
+    </Menu>  
+      
+    <yap:YapView Grid.Row="1" x:Name="yap"/>
+
+    <TextBox Grid.Row="2" x:Name="log" IsEnabled="False" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible"/>
 
   </Grid>
 </Window>

@@ -13,7 +13,8 @@ namespace YapView
     public IYapHandler Handler { get; set; }
     public object handle = null;
     string currentObjectName = "";
-
+    uint objID;
+    public uint ObjID { get => objID; }
 
     SKRect rect;
     SKSize size;
@@ -40,7 +41,6 @@ namespace YapView
       }
     }
 
-
     String text = "";
     public String Text
     {
@@ -55,8 +55,72 @@ namespace YapView
       }
     }
 
-    public bool Selected { get; set; }
+    public Object(SKPoint pos, IYapHandler handler, object handle)
+    {
+      Handler = handler;
+      this.handle = handle;
+      rect = new SKRect();
+      size = new SKSize(100f, 25f);
+
+      rect.Left = (float)pos.X;
+      rect.Top = (float)pos.Y;
+      rect.Size = size;
+
+      Inputs = 0;
+      Outputs = 0;
+      Selected = true;
+      EditMode = true;
+
+      CarretPos = 0;
+    }
+
+    public void GetValuesFromHandle()
+    {
+      string name = Handler.GetObjectName(handle);
+      string args = Handler.GetObjectArguments(handle);
+      if (args.Length > 0) name += " " + args;
+      Text = name;
+      currentObjectName = Text;
+      Inputs = Handler.GetObjectInputCount(handle);
+      Outputs = Handler.GetObjectOutputCount(handle);
+      objID = Handler.GetObjectID(handle);
+      Selected = false;
+      EditMode = false;
+      UpdateLayout();
+    }
+
+    public void Move(SKPoint delta)
+    {
+      rect.Left = rect.Left + delta.X;
+      rect.Top = rect.Top + delta.Y;
+      rect.Size = size;
+      UpdateLayout();
+    }
+
+    public void StorePosition()
+    {
+      Handler.SetPosition(handle, rect.Left, rect.Top);
+    }
+
+    /*
+        EDIT
+    */
+
     public bool EditMode { get; set; }
+
+    public int CarretPos { get; set; } = 0;
+
+    public int FindCarretPos(SKPoint pos)
+    {
+      string s = Text;
+      float length = Paint.Text.MeasureText(s);
+      while (s.Length > 0 && pos.X < rect.Left + 4 + length)
+      {
+        s = s.Remove(s.Length - 1);
+        length = Paint.Text.MeasureText(s);
+      }
+      return s.Length;
+    }
 
     public bool HasChanged()
     {
@@ -112,6 +176,7 @@ namespace YapView
         // set inlets and outlets
         Inputs = Handler.GetObjectInputCount(handle);
         Outputs = Handler.GetObjectOutputCount(handle);
+        objID = Handler.GetObjectID(handle);
       } else
       {
         Inputs = 0;
@@ -122,27 +187,13 @@ namespace YapView
       return objectIsReplaced;
     }
 
+    /*
+        SELECT AND HOVER
+    */
+
     public bool Hover { get; set; }
 
-    public int CarretPos { get; set; } = 0;
-
-    public Object(SKPoint pos, IYapHandler handler)
-    {
-      Handler = handler;
-      rect = new SKRect();
-      size = new SKSize(100f, 25f);
-
-      rect.Left = (float)pos.X;
-      rect.Top = (float)pos.Y;
-      rect.Size = size;
-
-      Inputs = 0;
-      Outputs = 0;
-      Selected = true;
-      EditMode = true;
-
-      CarretPos = 0;
-    }
+    public bool Selected { get; set; }
 
     public bool IsInside(SKPoint pos)
     {
@@ -186,27 +237,42 @@ namespace YapView
       return -1;
     }
 
-    public int FindCarretPos(SKPoint pos)
+    public SKPoint GetOutputPos(uint outlet)
     {
-      string s = Text;
-      float length = Paint.Text.MeasureText(s);
-      while(s.Length > 0 && pos.X < rect.Left + 4 + length)
+      SKPoint p = new SKPoint();
+      if (outlet < output.Count)
       {
-        s = s.Remove(s.Length - 1);
-        length = Paint.Text.MeasureText(s);
+        p.X = output[(int)outlet].MidX;
+        p.Y = output[(int)outlet].MidY;
       }
-      return s.Length;
+      return p;
     }
+
+    public SKPoint GetInputPos(uint inlet)
+    {
+      SKPoint p = new SKPoint();
+      if (inlet < input.Count)
+      {
+        p.X = input[(int)inlet].MidX;
+        p.Y = input[(int)inlet].MidY;
+      }
+      return p;
+    }
+
+
+    /*
+        DRAW
+    */
 
     public void Draw(SKCanvas canvas)
     {
-      
-      if(Selected)
+
+      if (Selected)
       {
         canvas.DrawRect(rect, Paint.ObjectFillSelected);
         canvas.DrawRect(rect, Paint.ObjectBorderSelected);
       }
-      else if(Hover)
+      else if (Hover)
       {
         canvas.DrawRect(rect, Paint.ObjectFill);
         canvas.DrawRect(rect, Paint.ObjectBorderHovered);
@@ -220,55 +286,25 @@ namespace YapView
       canvas.DrawLine(rect.Left, rect.Top + 5, rect.Right, rect.Top + 5, Paint.ObjectBorder);
       canvas.DrawLine(rect.Left, rect.Bottom - 5, rect.Right, rect.Bottom - 5, Paint.ObjectBorder);
 
-      foreach(var rect in input)
+      foreach (var rect in input)
       {
         canvas.DrawRect(rect, Paint.Pin);
       }
 
-      foreach(var rect in output)
+      foreach (var rect in output)
       {
         canvas.DrawRect(rect, Paint.Pin);
       }
 
       canvas.DrawText(Text, rect.Left + 4, rect.Top + 17, Paint.Text);
 
-      if(EditMode)
+      if (EditMode)
       {
         string s = Text;
         if (CarretPos < Text.Length) s = s.Remove(CarretPos);
         float xPos = rect.Left + 4 + Paint.Text.MeasureText(s);
         canvas.DrawLine(xPos, rect.Top + 5, xPos, rect.Bottom - 4, Paint.Carret);
       }
-    }
-
-    public void Move(SKPoint delta)
-    {
-      rect.Left = rect.Left + delta.X;
-      rect.Top = rect.Top + delta.Y;
-      rect.Size = size;
-      UpdateLayout();
-    }
-
-    public SKPoint GetOutputPos(int pin)
-    {
-      SKPoint p = new SKPoint();
-      if (pin < output.Count)
-      {
-        p.X = output[pin].MidX;
-        p.Y = output[pin].MidY;
-      }
-      return p;
-    }
-
-    public SKPoint GetInputPos(int pin)
-    {
-      SKPoint p = new SKPoint();
-      if (pin < input.Count)
-      {
-        p.X = input[pin].MidX;
-        p.Y = input[pin].MidY;
-      }
-      return p;
     }
 
     private void UpdateLayout()

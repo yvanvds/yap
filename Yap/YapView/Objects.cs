@@ -9,9 +9,24 @@ namespace YapView
 {
   public class Objects
   {
+    public Object Current { get; set; } = null;
+    public Object BelowMouse { get; set; } = null;
+    public ObservableCollection<Object> List = new ObservableCollection<Object>();
+    IYapHandler Handler = null;
+
     public Objects(IYapHandler Handler)
     {
       this.Handler = Handler;
+    }
+
+    public Object GetObjectWithID(uint objID)
+    {
+      foreach(Object obj in List)
+      {
+        if (obj.ObjID == objID) return obj;
+      }
+
+      return null;
     }
 
     public void Draw(SkiaSharp.SKCanvas canvas)
@@ -22,12 +37,9 @@ namespace YapView
       }
     }
 
-    public Object Add(SkiaSharp.SKPoint pos)
-    {
-      List.Add(new Object(pos, Handler));
-      Current = List.Last();
-      return Current;
-    }
+    /*
+        SELECTION
+    */
 
     public bool TrySetCurrent()
     {
@@ -58,6 +70,10 @@ namespace YapView
       if (Current == null) return false;
       return Current.Selected;
     }
+
+    /*
+        EDIT
+    */
 
     public int EditCurrentOnPos(SkiaSharp.SKPoint pos)
     {
@@ -108,6 +124,17 @@ namespace YapView
       }
     }
 
+    /*
+        CONTAINER MANIPULATION
+    */
+
+    public Object Add(SkiaSharp.SKPoint pos, object obj = null)
+    {
+      List.Add(new Object(pos, Handler, obj));
+      Current = List.Last();
+      return Current;
+    }
+
     public void DeleteCurrent()
     {
       if (Current == null) return;
@@ -115,9 +142,20 @@ namespace YapView
       Current = null;
     }
 
-    public Object Current { get; set; } = null;
-    public Object BelowMouse { get; set; } = null;
-    public ObservableCollection<Object> List = new ObservableCollection<Object>();
-    IYapHandler Handler = null;
+    public void StorePositions()
+    {
+      foreach(var obj in List)
+      {
+        obj.StorePosition();
+      }
+    }
+
+    public void Clear()
+    {
+      List.Clear();
+      Current = null;
+    }
+
+    
   }
 }

@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -73,6 +75,33 @@ namespace Yap
     private void OnMessage(string message)
     {
       log.Text = message + Environment.NewLine + log.Text;
+    }
+
+    private void Load_Click(object sender, RoutedEventArgs e)
+    {
+      OpenFileDialog dialog = new OpenFileDialog();
+      dialog.Filter = "Yap File (*.yap)|*.yap";
+      if(dialog.ShowDialog() == true)
+      {
+        string content = File.ReadAllText(dialog.FileName);
+        yap.Load(content);
+      }
+    }
+
+    private void Save_Click(object sender, RoutedEventArgs e)
+    {
+      SaveFileDialog dialog = new SaveFileDialog();
+      dialog.Filter = "Yap File (*.yap)|*.yap";
+      if(dialog.ShowDialog() == true)
+      {
+        string content = yap.Save();
+        File.WriteAllText(dialog.FileName, content);
+      }
+    }
+
+    private void Exit_Click(object sender, RoutedEventArgs e)
+    {
+      Application.Current.Shutdown();
     }
   }
 }
