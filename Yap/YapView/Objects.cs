@@ -12,11 +12,11 @@ namespace YapView
     public Object Current { get; set; } = null;
     public Object BelowMouse { get; set; } = null;
     public ObservableCollection<Object> List = new ObservableCollection<Object>();
-    IYapHandler Handler = null;
+    YapView View = null;
 
-    public Objects(IYapHandler Handler)
+    public Objects(YapView View)
     {
-      this.Handler = Handler;
+      this.View = View;
     }
 
     public Object GetObjectWithID(uint objID)
@@ -27,6 +27,14 @@ namespace YapView
       }
 
       return null;
+    }
+
+    public void UpdateGui()
+    {
+      foreach (var obj in List)
+      {
+        obj.GuiShape.UpdateGui();
+      }
     }
 
     public void Draw(SkiaSharp.SKCanvas canvas)
@@ -53,14 +61,19 @@ namespace YapView
 
     public void Deselect()
     {
-      if (Current != null) Current.Selected = false;
+      if (Current != null)
+      {
+        Current.GuiShape.Selected = false;
+        Current.GuiShape.EditMode = false;
+        Current.GuiShape.GuiEditMode = false;
+      }
       Current = null;
     }
 
     public void SelectCurrent()
     {
       if (Current == null) return;
-      Current.Selected = true;
+      Current.GuiShape.Selected = true;
       int index = List.IndexOf(Current);
       List.Move(index, List.Count - 1);
     }
@@ -68,7 +81,7 @@ namespace YapView
     public bool CurrentIsSelected()
     {
       if (Current == null) return false;
-      return Current.Selected;
+      return Current.GuiShape.Selected;
     }
 
     /*
@@ -78,29 +91,28 @@ namespace YapView
     public int EditCurrentOnPos(SkiaSharp.SKPoint pos)
     {
       if (Current == null) return 0;
-      Current.EditMode = true;
-      Current.CarretPos = Current.FindCarretPos(pos);
-      return Current.CarretPos;
+      Current.GuiShape.EditMode = true;
+      return Current.GuiShape.SetCarretPos(pos);
     }
 
     public void EndEditMode()
     {
       if (Current == null) return;
-      Current.Selected = false;
-      Current.EditMode = false;
+      Current.GuiShape.Selected = false;
+      Current.GuiShape.EditMode = false;
     }
 
     public bool InEditMode()
     {
       if (Current == null) return false;
-      return Current.EditMode;
+      return Current.GuiShape.EditMode;
     }
 
     public void UpdateEditMode(string text, int carretPos)
     {
       if (Current == null) return;
-      Current.Text = text;
-      Current.CarretPos = carretPos;
+      Current.GuiShape.Text = text;
+      Current.GuiShape.CarretPos = carretPos;
     }
 
     public void SetBelowMouse(SkiaSharp.SKPoint pos)
@@ -111,15 +123,17 @@ namespace YapView
         bool HoverFound = false;
         for (int i = List.Count - 1; i >= 0; i--)
         {
+          List[i].GuiShape.Hover = false;
           if (!HoverFound)
           {
-            if (List[i].IsInside(pos))
+            if (List[i].GuiShape.IsInside(pos))
             {
               BelowMouse = List[i];
               HoverFound = true;
+              List[i].GuiShape.Hover = true;
             }
           }
-          List[i].Hover = false;
+          
         }
       }
     }
@@ -130,7 +144,7 @@ namespace YapView
 
     public Object Add(SkiaSharp.SKPoint pos, object obj = null)
     {
-      List.Add(new Object(pos, Handler, obj));
+      List.Add(new Object(pos, View, obj));
       Current = List.Last();
       return Current;
     }
@@ -138,6 +152,7 @@ namespace YapView
     public void DeleteCurrent()
     {
       if (Current == null) return;
+      Current.Release();
       List.Remove(Current);
       Current = null;
     }
@@ -152,8 +167,13 @@ namespace YapView
 
     public void Clear()
     {
-      List.Clear();
       Current = null;
+      BelowMouse = null;
+      foreach(var item in List)
+      {
+        item.Release();
+      }
+      List.Clear();
     }
 
     

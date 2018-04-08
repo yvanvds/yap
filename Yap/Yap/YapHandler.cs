@@ -76,6 +76,7 @@ namespace Yap
 
     public void SetPosition(object obj, float X, float Y)
     {
+      if (obj == null) return;
       Pos p = new Pos();
       p.X = X;
       p.Y = Y;
@@ -121,5 +122,39 @@ namespace Yap
     {
       return ((IHandle)obj).GetID();
     }
+
+    public void SendBang(object obj)
+    {
+      ((IHandle)obj).SetBang(0);
+    }
+
+    public void SendIntData(object obj, int value)
+    {
+      ((IHandle)obj).SetIntData(0, value);
+    }
+
+    public void SendFloatData(object obj, float value)
+    {
+      ((IHandle)obj).SetFloatData(0, value);
+    }
+
+    public string GetGuiValue(object obj)
+    {
+      return ((IHandle)obj).GetGuiValue();
+    }
+
+    public YapView.ObjectType GetObjectType(object obj)
+    {
+      switch(((IHandle)obj).Name)
+      {
+        case ".i": return YapView.ObjectType.INT;
+        case ".f": return YapView.ObjectType.FLOAT;
+        case ".slider": return YapView.ObjectType.SLIDER;
+        case ".b": return YapView.ObjectType.BUTTON;
+        case ".t": return YapView.ObjectType.TOGGLE;
+        default: return YapView.ObjectType.BASE;
+      }
+    }
+
   }
 }

@@ -22,17 +22,42 @@ namespace YapView
 
   public class YapView : SkiaSharp.Views.WPF.SKElement
   {
-    IYapHandler Handler = null;
+    // callback interface which will be used to interact
+    // with an external object library like YSE
+    IYapHandler handler = null;
+    public IYapHandler Handler { get => handler; }
+
+    // The yap view presents objects and connections
+    // between objects.
     Connections Connections = null;
     Objects Objects = null;
 
+    // Skia does not have input handling on its own.
+    // The String Editor enables us to build objects with
+    // user text input.
     StringEditor SEdit = new StringEditor();
 
     bool MouseIsDown = false;
     SKPoint MousePos = new SKPoint();
 
+    // Canvas will be updated every 50 milliseconds
     DispatcherTimer UpdateCanvas = new DispatcherTimer(DispatcherPriority.Render);
 
+    // objects and connections behave differently in
+    // edit and performance mode
+    private bool performanceMode = false;
+    public bool PerformanceMode
+    {
+      get => performanceMode;
+      set
+      {
+        performanceMode = value;
+        Objects.Deselect();
+        Connections.Deselect();
+      }
+    }
+
+    
     static YapView()
     {
       DefaultStyleKeyProperty.OverrideMetadata(typeof(YapView), new FrameworkPropertyMetadata(typeof(YapView)));
@@ -40,9 +65,9 @@ namespace YapView
     
     public void Init(IYapHandler Handler)
     {
-      this.Handler = Handler;
-      Objects = new Objects(Handler);
-      Connections = new Connections(Handler);
+      this.handler = Handler;
+      Objects = new Objects(this);
+      Connections = new Connections(this);
 
       UpdateCanvas.Interval = new TimeSpan(0, 0, 0, 0, 50);
       UpdateCanvas.Tick += new EventHandler(UpdateCanvas_Elapsed);
@@ -71,7 +96,7 @@ namespace YapView
       // load connections
       foreach(Object O in Objects.List)
       {
-        for(uint outlet = 0; outlet < O.Outputs; outlet++)
+        for(uint outlet = 0; outlet < O.GuiShape.Outputs; outlet++)
         {
           uint connections = Handler.GetConnections(O.handle, outlet);
           for(uint j = 0; j < connections; j++)
@@ -95,23 +120,13 @@ namespace YapView
       return Handler.Save();
     }
 
-    private bool StartConnection(SKPoint pos)
-    {
-      int pin = Objects.Current.OnOutput(pos);
-      if (pin != -1)
-      {
-        Connections.Add(Objects.Current, (uint)pin, pos);
-        return true;
-      }
-      return false;
-    }
-
     /*
         DRAW
     */
 
     private void UpdateCanvas_Elapsed(object sender, EventArgs e)
     {
+      Objects.UpdateGui();
       InvalidateVisual();
     }
 
@@ -122,8 +137,34 @@ namespace YapView
 
       canvas.Clear(SKColors.DimGray);
 
-      Objects.Draw(canvas);
-      Connections.Draw(canvas);
+      if(PerformanceMode)
+      {
+        Connections.Draw(canvas);
+        Objects.Draw(canvas);
+      } else
+      {
+        Objects.Draw(canvas);
+        Connections.Draw(canvas);
+      }
+      
+    }
+
+    private bool TryStartConnection(SKPoint pos)
+    {
+      if (Objects.Current == null) return false;
+      int pin = Objects.Current.GuiShape.OnOutput(pos);
+      if (pin != -1)
+      {
+        Connections.Add(Objects.Current, (uint)pin, pos);
+        return true;
+      }
+      return false;
+    }
+
+    protected override void OnMouseLeave(MouseEventArgs e)
+    {
+      base.OnMouseLeave(e);
+      MouseIsDown = false;
     }
 
     /*
@@ -131,63 +172,52 @@ namespace YapView
     */
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
+      MouseIsDown = true;
+      e.Handled = true;
+
       SKPoint pos = new SKPoint();
       pos.X = (float)e.GetPosition(this).X;
       pos.Y = (float)e.GetPosition(this).Y;
+      MousePos = pos;
 
       Connections.Deselect();
 
-      if (Objects.TrySetCurrent())
-      {
+      Object previous = Objects.Current;
 
-        if (Objects.CurrentIsSelected())
-        {
-          if (StartConnection(pos))
-          {
-            Objects.Deselect();
-          }
-          else
-          {
-            int carret = Objects.EditCurrentOnPos(pos);
-            SEdit.Edit(Objects.Current.Text, carret);
-          }
-        }
-        else
-        {
-          if (StartConnection(pos))
-          {
-            Objects.Deselect();
-          }
-          else
-          {
-            Objects.SelectCurrent();
-          }
-        }
-      }
-
-      else if (Connections.TrySelectBelowMouse())
+      if(Objects.TrySetCurrent())
       {
-      }
-      else
+        // clear selected state unless the same item is clicked twice in a row
+        if(previous != Objects.Current)
+        {
+          if(previous != null) previous.Deselect();
+          Objects.Current.Deselect();
+        }
+        // let object handle the click
+        Objects.Current.OnMouseLeftButtonDown(pos);
+      } else
       {
-        if (Objects.Current != null)
+        if (previous != null)
         {
           Objects.EndEditMode();
-
-          if (Objects.Current.HasChanged())
+          if (previous.HasChanged() && previous.Reconfigure())
           {
-            if (Objects.Current.Reconfigure())
-            {
-              Connections.RemoveConnectedTo(Objects.Current);
-            }
+            Connections.RemoveConnectedTo(previous);
           }
           Objects.Deselect();
         }
       }
 
-      MouseIsDown = true;
-      MousePos = pos;
-      e.Handled = true;
+      // connections are only handled in edit mode
+      if (PerformanceMode) return;
+
+      // try to create or select a connection
+      if(TryStartConnection(pos))
+      {
+        Objects.Deselect();
+      }
+      else {
+        Connections.TrySelectBelowMouse();
+      }
     }
 
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
@@ -200,7 +230,7 @@ namespace YapView
 
         foreach (var obj in Objects.List)
         {
-          if (obj.IsInside(pos))
+          if (obj.GuiShape.IsInside(pos))
           {
             Connections.TrySetCurrentEnd(obj, pos);
             break;
@@ -212,19 +242,50 @@ namespace YapView
       e.Handled = true;
     }
 
+
+
     protected override void OnMouseMove(MouseEventArgs e)
     {
       SKPoint pos = new SKPoint();
       pos.X = (float)e.GetPosition(this).X;
       pos.Y = (float)e.GetPosition(this).Y;
 
-      // find connection or object below mouse
-      if(Connections.SetBelowMouse(pos))
+      if (PerformanceMode)
       {
-        Objects.BelowMouse = null;
+        if(MouseIsDown)
+        {
+          if(Objects.Current != null)
+          {
+            Objects.Current.GuiShape.OnMouseMove(pos);
+          }
+        } else
+        {
+          Objects.SetBelowMouse(pos);
+        }
+        return;
+      }
+
+      // else:
+
+
+      // find connection or object below mouse
+      Objects.SetBelowMouse(pos);
+      if(Objects.BelowMouse != null)
+      {
+        if(Objects.BelowMouse.GuiShape.OnOutput(pos) != -1)
+        {
+          Connections.BelowMouse = null;
+        } else
+        {
+          Connections.SetBelowMouse(pos);
+          if(Connections.BelowMouse != null)
+          {
+            Objects.BelowMouse = null;
+          }
+        }
       } else
       {
-        Objects.SetBelowMouse(pos);
+        Connections.SetBelowMouse(pos);
       }
 
       // connections get precendence on hover
@@ -245,8 +306,31 @@ namespace YapView
       MousePos = pos;
     }
 
+    protected override void OnMouseWheel(MouseWheelEventArgs e)
+    {
+      if(PerformanceMode)
+      {
+        if(Objects.BelowMouse != null)
+        {
+          float pos = (float)e.GetPosition(this).X;
+          Objects.BelowMouse.OnMouseWheel(e, pos);
+        }
+      }
+    }
+
     protected override void OnKeyDown(KeyEventArgs e)
     {
+      if(PerformanceMode)
+      {
+        if(Objects.Current != null && Objects.Current.GuiShape.GuiEditMode)
+        {
+          string text = SEdit.Update(e.Key);
+          Objects.Current.GuiShape.GuiValue = text;
+          Objects.Current.GuiShape.CarretPos = SEdit.Pos;
+        }
+        return;
+      }
+
       if (Objects.InEditMode())
       {
         string text = SEdit.Update(e.Key);
@@ -265,13 +349,25 @@ namespace YapView
           Connections.DeleteCurrent();
         }
       }
+    }
 
-      else if (e.Key == Key.O)
+    // patcher edits
+    public void AddObject(bool onMousePos)
+    {
+      if (onMousePos)
       {
         Objects.Add(MousePos);
-        SEdit.Edit(Objects.Current.Text, 0);
+      } else
+      {
+        Objects.Add(new SKPoint(0, 0));
       }
+      SEdit.Edit(Objects.Current.GuiShape.Text, 0, EditModeStyle.Line);
+    }
 
+    public void Clear()
+    {
+      Connections.Clear();
+      Objects.Clear();
     }
   }
 }

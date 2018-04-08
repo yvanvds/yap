@@ -16,10 +16,12 @@ namespace YapView
     Object End = null;
     uint inlet;
 
-    IYapHandler handler;
+    YapView View;
 
     SKPoint mousePos = new SKPoint();
     SKPoint closest = new SKPoint();
+
+    SKPath path = new SKPath();
 
     bool isComplete = false;
     public bool Complete { get => isComplete; }
@@ -27,9 +29,9 @@ namespace YapView
     public bool Hover { get; set; } = false;
     public bool Selected { get; set; } = false;
 
-    public Connection(IYapHandler handler)
+    public Connection(YapView View)
     {
-      this.handler = handler;
+      this.View = View;
     }
 
     public void SetStart(Object obj, uint outlet)
@@ -50,7 +52,7 @@ namespace YapView
       this.inlet = inlet;
       isComplete = true;
 
-      if(connect) handler.Connect(Start.handle, this.outlet, End.handle, this.inlet);
+      if(connect) View.Handler.Connect(Start.handle, this.outlet, End.handle, this.inlet);
     }
 
     public bool IsConnected(Object obj)
@@ -64,40 +66,54 @@ namespace YapView
       mousePos.Y = (float)pos.Y;
     }
 
+    public bool Contains(SKPoint pos)
+    {
+      if (path.Contains(pos.X, pos.Y)) return true;
+      return false;
+    }
+
     public float DistanceToPos(SKPoint pos)
     {
       if (!isComplete) return -1f;
-      return MathTools.FindDistance(Start.GetOutputPos(outlet), End.GetInputPos(inlet), pos, out closest);
+      return MathTools.FindDistance(Start.GuiShape.GetOutputPos(outlet), End.GuiShape.GetInputPos(inlet), pos, out closest);
     }
 
     public void Draw(SKCanvas canvas)
     {
-      SKPoint start = Start.GetOutputPos(outlet);
+      SKPoint start = Start.GuiShape.GetOutputPos(outlet);
       SKPoint end;
       if (isComplete)
       {
-        end = End.GetInputPos(inlet);
+        end = End.GuiShape.GetInputPos(inlet);
       }
       else
       {
         end = mousePos;
       }
 
+      path.Rewind();
+      
+      path.MoveTo(start.X, start.Y);
+      path.CubicTo(start.X, start.Y + 50, end.X, end.Y - 50, end.X, end.Y);
+
       if (Hover || Selected)
       {
-        canvas.DrawLine(start.X, start.Y, end.X, end.Y, Paint.ConnectionHover);
+        canvas.DrawPath(path, Paint.ConnectionHover);
       }
       else
       {
-        canvas.DrawLine(start.X, start.Y, end.X, end.Y, Paint.Connection);
+        canvas.DrawPath(path, Paint.Connection);
       }
+      
+
+      
     }
 
     public void Disconnect()
     {
       if (isComplete)
       {
-        handler.Disconnnect(Start.handle, outlet, End.handle, inlet);
+        View.Handler.Disconnnect(Start.handle, outlet, End.handle, inlet);
       }
       isComplete = false;
     }

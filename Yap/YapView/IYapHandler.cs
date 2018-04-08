@@ -36,5 +36,12 @@ namespace YapView
     uint GetConnections(object obj, uint outlet);
     uint GetConnectionTarget(object obj, uint outlet, uint connection);
     uint GetConnectionTargetInlet(object obj, uint outlet, uint connection);
+
+    void SendBang(object obj);
+    void SendIntData(object obj, int value);
+    void SendFloatData(object obj, float value);
+
+    string GetGuiValue(object obj);
+    ObjectType GetObjectType(object obj);
   }
 }

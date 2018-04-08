@@ -64,10 +64,18 @@
     </Page>
     <Compile Include="Connection.cs" />
     <Compile Include="Connections.cs" />
+    <Compile Include="Gui\Base.cs" />
+    <Compile Include="Gui\BasicCtrl.cs" />
+    <Compile Include="Gui\ButtonCtrl.cs" />
+    <Compile Include="Gui\FloatCtrl.cs" />
+    <Compile Include="Gui\IntCtrl.cs" />
+    <Compile Include="Gui\SliderCtrl.cs" />
+    <Compile Include="Gui\ToggleCtrl.cs" />
     <Compile Include="IYapHandler.cs" />
     <Compile Include="MathTools.cs" />
     <Compile Include="Object.cs" />
     <Compile Include="Objects.cs" />
+    <Compile Include="ObjectType.cs" />
     <Compile Include="Paint.cs" />
     <Compile Include="StringEditor.cs" />
     <Compile Include="YapView.cs">
@@ -98,6 +106,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SkiaSharp.1.59.3\build\net45\SkiaSharp.targets" Condition="Exists('..\packages\SkiaSharp.1.59.3\build\net45\SkiaSharp.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

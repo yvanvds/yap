@@ -7,15 +7,24 @@ using System.Windows.Input;
 
 namespace YapView
 {
+  public enum EditModeStyle
+  {
+    MultiLine,
+    Line,
+    Float,
+    Int,
+  }
   public class StringEditor
   {
     string Content;
+    EditModeStyle Mode = EditModeStyle.Line;
     public int Pos { get; set; }
     IoCmd_t data;
 
-    public void Edit(string content, int position)
+    public void Edit(string content, int position, EditModeStyle mode)
     {
       Content = content;
+      Mode = mode;
       Pos = position;
     }
 
@@ -27,6 +36,14 @@ namespace YapView
         string s = data.character.ToString();
         Content = Content.Insert(Pos,s);
         Pos++;
+        if(Mode == EditModeStyle.Int || Mode == EditModeStyle.Float)
+        {
+          if(Content.Length > 1 && Content[0] == '0')
+          {
+            Content = Content.Remove(0, 1);
+            Pos--;
+          }
+        }
       } else
       {
         if(data.arrowLeft)
@@ -93,6 +110,20 @@ namespace YapView
       KeyDecode.arrowRight = false;
       KeyDecode.delete = false;
 
+      if (key == Key.Enter)
+      {
+        KeyDecode.enter = true;
+        if(Mode == EditModeStyle.MultiLine)
+        {
+          KeyDecode.printable = true;
+          KeyDecode.character = '\n';
+        } else
+        {
+          KeyDecode.printable = false;
+        }
+        return;
+      }
+
       if (key == Key.Back)
       {
         KeyDecode.backspace = true;
@@ -121,9 +152,39 @@ namespace YapView
         return;
       }
 
+      if(Mode == EditModeStyle.Int || Mode == EditModeStyle.Float)
+      {
+        if (ParseNumeric(key, ref KeyDecode)) return;
+      }
+
+      // int cannot handle anything else
+      if(Mode == EditModeStyle.Int)
+      {
+        KeyDecode.type = 1;
+        KeyDecode.printable = false;
+        KeyDecode.character = '\x00';
+        return;
+      }
+
+      if(Mode == EditModeStyle.Float)
+      {
+        if (key == Key.OemPeriod || key == Key.Decimal)
+        {
+          KeyDecode.character = '.';
+          return;
+        }
+
+        // got nothing valid
+        KeyDecode.type = 1;
+        KeyDecode.printable = false;
+        KeyDecode.character = '\x00';
+        return;
+      }
+
+      // all other keys can be parsed when in line or multi line
+      // mode
       switch (key)
       {
-        case Key.Enter: KeyDecode.character = '\n'; return;
         case Key.A: KeyDecode.character = (iscap ? 'A' : 'a'); return;
         case Key.B: KeyDecode.character = (iscap ? 'B' : 'b'); return;
         case Key.C: KeyDecode.character = (iscap ? 'C' : 'c'); return;
@@ -200,6 +261,34 @@ namespace YapView
           return;
       } //switch          
     } // function
+
+    private bool ParseNumeric(Key key, ref IoCmd_t KeyDecode)
+    {
+      switch (key)
+      {
+        case Key.D0: KeyDecode.character = '0'; return true;
+        case Key.D1: KeyDecode.character = '1'; return true;
+        case Key.D2: KeyDecode.character = '2'; return true;
+        case Key.D3: KeyDecode.character = '3'; return true;
+        case Key.D4: KeyDecode.character = '4'; return true;
+        case Key.D5: KeyDecode.character = '5'; return true;
+        case Key.D6: KeyDecode.character = '6'; return true;
+        case Key.D7: KeyDecode.character = '7'; return true;
+        case Key.D8: KeyDecode.character = '8'; return true;
+        case Key.D9: KeyDecode.character = '9'; return true;
+        case Key.NumPad0: KeyDecode.character = '0'; return true;
+        case Key.NumPad1: KeyDecode.character = '1'; return true;
+        case Key.NumPad2: KeyDecode.character = '2'; return true;
+        case Key.NumPad3: KeyDecode.character = '3'; return true;
+        case Key.NumPad4: KeyDecode.character = '4'; return true;
+        case Key.NumPad5: KeyDecode.character = '5'; return true;
+        case Key.NumPad6: KeyDecode.character = '6'; return true;
+        case Key.NumPad7: KeyDecode.character = '7'; return true;
+        case Key.NumPad8: KeyDecode.character = '8'; return true;
+        case Key.NumPad9: KeyDecode.character = '9'; return true;
+      }
+      return false;
+    }
   }
 
   public struct IoCmd_t
@@ -214,6 +303,7 @@ namespace YapView
     public bool delete;
     public bool arrowLeft;
     public bool arrowRight;
+    public bool enter;
     public int type; //sideband
     public string s;    //sideband
   };

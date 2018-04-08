@@ -11,9 +11,15 @@ namespace YapView
 {
   public class Connections
   {
-    public Connections(IYapHandler handler)
+    ObservableCollection<Connection> List = new ObservableCollection<Connection>();
+    YapView View;
+
+    public Connection Current { set; get; } = null;
+    public Connection BelowMouse { set; get; } = null;
+
+    public Connections(YapView View)
     {
-      this.handler = handler;
+      this.View = View;
     }
 
     public void Draw(SkiaSharp.SKCanvas canvas)
@@ -42,7 +48,7 @@ namespace YapView
 
     public void Add(Object obj, uint outlet, SKPoint pos)
     {
-      List.Add(new Connection(handler));
+      List.Add(new Connection(View));
       Current = List.Last();
       Current.SetStart(obj, outlet);
       Point p = new Point();
@@ -53,7 +59,7 @@ namespace YapView
 
     public void Add(Object start, uint outlet, Object end, uint inlet)
     {
-      List.Add(new Connection(handler));
+      List.Add(new Connection(View));
       List.Last().SetStart(start, outlet);
       List.Last().SetEnd(end, inlet);
     }
@@ -76,15 +82,20 @@ namespace YapView
 
     public void Clear()
     {
-      List.Clear();
+      foreach(var connection in List)
+      {
+        connection.Disconnect();
+      }
+      BelowMouse = null;
       Current = null;
+      List.Clear();
     }
 
     public void TrySetCurrentEnd(Object obj, SKPoint pos)
     {
       if (Current.IsStart(obj)) return;
-      int pin = obj.OnInput(pos);
-      if (pin == -1 && obj.Inputs > 0)
+      int pin = obj.GuiShape.OnInput(pos);
+      if (pin == -1 && obj.GuiShape.Inputs > 0)
       {
         pin = 0;
       }
@@ -113,6 +124,21 @@ namespace YapView
     public bool SetBelowMouse(SKPoint pos)
     {
       BelowMouse = null;
+      foreach(var obj in List)
+      {
+        obj.Hover = false;
+        if(obj.Contains(pos))
+        {
+          BelowMouse = obj;
+          BelowMouse.Hover = true;
+          return true;
+        }
+      }
+
+      // nothing found.Try and find nearby lines
+      // This is needed because the detect method above
+      // does not seem to work for straight lines
+
       if (List.Count > 0)
       {
         Connection nearest = List[0];
@@ -141,9 +167,6 @@ namespace YapView
       return false;
     }
 
-    ObservableCollection<Connection> List = new ObservableCollection<Connection>();
-    IYapHandler handler;
-    public Connection Current { set; get; } = null;
-    public Connection BelowMouse { set; get; } = null;
+
   }
 }

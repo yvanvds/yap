@@ -60,10 +60,10 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="YSE.NET.PCL, Version=1.0.13.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\YSE.NET.PCL.1.0.13\lib\netstandard2.0\YSE.NET.PCL.dll</HintPath>
+      <HintPath>..\packages\YSE.NET.PCL.1.0.19\lib\netstandard2.0\YSE.NET.PCL.dll</HintPath>
     </Reference>
-    <Reference Include="Yse.NET.Standard, Version=1.0.21.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Yse.NET.Standard.1.0.21\lib\netstandard2.0\Yse.NET.Standard.dll</HintPath>
+    <Reference Include="Yse.NET.Standard, Version=1.0.6672.39370, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Yse.NET.Standard.1.0.41\lib\netstandard2.0\Yse.NET.Standard.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -71,6 +71,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Commands.cs" />
     <Compile Include="YapHandler.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -119,15 +120,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="libsndfile-1.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="portaudio_x86.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Yse.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="libsndfile-1.dll" />
+    <Content Include="portaudio_x86.dll" />
+    <Content Include="Yse.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SkiaSharp.1.59.3\build\net45\SkiaSharp.targets" Condition="Exists('..\packages\SkiaSharp.1.59.3\build\net45\SkiaSharp.targets')" />

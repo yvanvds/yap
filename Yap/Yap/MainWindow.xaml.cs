@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Yap.Commands;
 
 namespace Yap
 {
@@ -29,6 +30,8 @@ namespace Yap
 
     YSE.ISound sound;
     YSE.IPatcher patcher;
+
+    String currentFileName = "";
 
     public MainWindow()
     {
@@ -64,6 +67,7 @@ namespace Yap
 
     protected override void OnClosed(EventArgs e)
     {
+      yap.Clear();
       UpdateYSE.Stop();
       Yse.Yse.System().close();
       base.OnClosed(e);
@@ -77,31 +81,94 @@ namespace Yap
       log.Text = message + Environment.NewLine + log.Text;
     }
 
-    private void Load_Click(object sender, RoutedEventArgs e)
-    {
-      OpenFileDialog dialog = new OpenFileDialog();
-      dialog.Filter = "Yap File (*.yap)|*.yap";
-      if(dialog.ShowDialog() == true)
-      {
-        string content = File.ReadAllText(dialog.FileName);
-        yap.Load(content);
-      }
-    }
-
-    private void Save_Click(object sender, RoutedEventArgs e)
-    {
-      SaveFileDialog dialog = new SaveFileDialog();
-      dialog.Filter = "Yap File (*.yap)|*.yap";
-      if(dialog.ShowDialog() == true)
-      {
-        string content = yap.Save();
-        File.WriteAllText(dialog.FileName, content);
-      }
-    }
-
     private void Exit_Click(object sender, RoutedEventArgs e)
     {
       Application.Current.Shutdown();
+    }
+
+    private void AddObjectCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+      string parameter = (string)e.Parameter;
+      if(parameter.Equals("key", StringComparison.CurrentCultureIgnoreCase))
+      {
+        yap.AddObject(true); // use mouse position
+      } else
+      {
+        yap.AddObject(false);
+      }
+      
+    }
+
+    private void OpenCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = true;
+    }
+
+    private void OpenCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+      OpenFileDialog dialog = new OpenFileDialog();
+      dialog.Filter = "Yap File (*.yap)|*.yap";
+      if (dialog.ShowDialog() == true)
+      {
+        yap.Clear();
+        string content = File.ReadAllText(dialog.FileName);
+        yap.Load(content);
+        currentFileName = dialog.FileName;
+      }
+    }
+
+    private void SaveCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = currentFileName.Length > 0;
+    }
+
+    private void SaveCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+      string content = yap.Save();
+      File.WriteAllText(currentFileName, content);
+    }
+
+    private void SaveAsCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = true;
+    }
+
+    private void SaveAsCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+      SaveFileDialog dialog = new SaveFileDialog();
+      dialog.Filter = "Yap File (*.yap)|*.yap";
+      if (dialog.ShowDialog() == true)
+      {
+        string content = yap.Save();
+        File.WriteAllText(dialog.FileName, content);
+        currentFileName = dialog.FileName;
+      } 
+    }
+
+    private void ExitCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = true;
+    }
+
+    private void ExitCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+      Application.Current.Shutdown();
+    }
+
+    private void AddObjectCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = true;
+    }
+
+    private void PerformCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = true;
+    }
+
+    private void PerformCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+      yap.PerformanceMode = !yap.PerformanceMode;
+      Perform.IsChecked = yap.PerformanceMode;
     }
   }
 }
