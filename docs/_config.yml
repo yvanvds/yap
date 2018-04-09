@@ -13,23 +13,21 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: Your awesome title
+title: YAP
 email: your-email@example.com
 description: >- # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+  YAP is a visual programming environment which works together with YSE, an advanced sound engine.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: jekyllrb
-github_username:  jekyll
-
+twitter_username: mutec0de
+github_username:  yvanvds
+repository: yap/yvanvds.github.io
 # Build settings
 markdown: kramdown
-theme: minima
+theme: jekyll-theme-midnight
 plugins:
   - jekyll-feed
-
+  - jekyll-menus
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
 # to override the default setting.
