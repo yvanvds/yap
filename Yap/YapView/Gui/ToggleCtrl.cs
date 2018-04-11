@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace YapView.Gui
 {
-  class ToggleCtrl : Base
+  class ToggleCtrl : GuiObject
   {
     bool on = false;
 
@@ -54,7 +54,7 @@ namespace YapView.Gui
       {
         // this is reversed because the update gui method
         // will do the actual update of on
-        obj.View.Handler.SendIntData(obj.handle, on ? 0 : 1);
+        Interface.Handle.SendIntData(obj.handle, on ? 0 : 1);
       }
       return true;
     }

@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace YapView.Gui
 {
-  class FloatCtrl : Base
+  class FloatCtrl : GuiObject
   {
 
     public FloatCtrl(SKPoint pos, Object obj) : base(pos, obj)
@@ -26,7 +26,6 @@ namespace YapView.Gui
     public override void DrawGui(SKCanvas canvas)
     {
       canvas.DrawRect(rect, Paint.FloatBackground);
-      canvas.DrawRect(rect, Paint.ObjectBorder);
 
       DrawPins(canvas);
 
@@ -63,7 +62,7 @@ namespace YapView.Gui
         posX -= 5;
       }
       value += (delta * multiplier);
-      obj.View.Handler.SendFloatData(obj.handle, value);
+      Interface.Handle.SendFloatData(obj.handle, value);
     }
 
     protected override void SendGuiValue(string value)
@@ -71,7 +70,7 @@ namespace YapView.Gui
       try
       {
         float i = float.Parse(value, CultureInfo.InvariantCulture.NumberFormat);
-        obj.View.Handler.SendFloatData(obj.handle, i);
+        Interface.Handle.SendFloatData(obj.handle, i);
       }
       catch (FormatException)
       {

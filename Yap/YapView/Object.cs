@@ -12,14 +12,12 @@ namespace YapView
 
   public class Object
   {
-    YapView view;
-    public YapView View { get => view; }
 
     StringEditor editor = new StringEditor();
     public StringEditor Editor { get => editor; }
 
     public object handle = null;
-    public Gui.Base GuiShape;
+    public Gui.GuiObject GuiShape;
 
 
     string currentObjectName = "";
@@ -27,9 +25,8 @@ namespace YapView
     ObjectType Type = ObjectType.BASE;
     public uint ObjID { get => objID; }
 
-    public Object(SKPoint pos, YapView View, object handle)
+    public Object(SKPoint pos, object handle)
     {
-      this.view = View;
       this.handle = handle;
 
       GuiShape = new Gui.BasicCtrl(pos, this);
@@ -37,10 +34,10 @@ namespace YapView
 
     public void GetValuesFromHandle()
     {
-      string name = View.Handler.GetObjectName(handle);
-      string args = View.Handler.GetObjectArguments(handle);
+      string name = Interface.Handle.GetObjectName(handle);
+      string args = Interface.Handle.GetObjectArguments(handle);
 
-      ObjectType newType = View.Handler.GetObjectType(handle);
+      ObjectType newType = Interface.Handle.GetObjectType(handle);
       if (newType != Type)
       {
         Type = newType;
@@ -50,9 +47,9 @@ namespace YapView
       if (args.Length > 0) name += " " + args;
       GuiShape.Text = name;
       currentObjectName = name;
-      GuiShape.Inputs = View.Handler.GetObjectInputCount(handle);
-      GuiShape.Outputs = View.Handler.GetObjectOutputCount(handle);
-      objID = View.Handler.GetObjectID(handle);
+      GuiShape.Inputs = Interface.Handle.GetObjectInputCount(handle);
+      GuiShape.Outputs = Interface.Handle.GetObjectOutputCount(handle);
+      objID = Interface.Handle.GetObjectID(handle);
       GuiShape.Selected = false;
       GuiShape.EditMode = false;
       UpdateLayout();
@@ -85,7 +82,8 @@ namespace YapView
 
     public void StorePosition()
     {
-      View.Handler.SetPosition(handle, GuiShape.Rect.Left, GuiShape.Rect.Top);
+      Interface.Handle.SetGuiProperty(handle, Gui.Properties.POSX, GuiShape.Rect.Left.ToString());
+      Interface.Handle.SetGuiProperty(handle, Gui.Properties.POSY, GuiShape.Rect.Top.ToString());
     }
 
     public bool HasChanged()
@@ -107,13 +105,13 @@ namespace YapView
           // reconstruct object if name is different
           if(!original[0].Equals(newText[0]))
           {
-            View.Handler.DeleteObject(handle);
-            handle = View.Handler.CreateObject(GuiShape.Text);
+            Interface.Handle.DeleteObject(handle);
+            handle = Interface.Handle.CreateObject(GuiShape.Text);
             objectIsReplaced = true;
           }
         } else
         {
-          View.Handler.DeleteObject(handle);
+          Interface.Handle.DeleteObject(handle);
           handle = null;
           objectIsReplaced = true;
         }
@@ -122,34 +120,39 @@ namespace YapView
         // handle is null, create a new object if possible
         if(newText.Length > 0)
         {
-          handle = View.Handler.CreateObject(newText[0]);
+          handle = Interface.Handle.CreateObject(newText[0]);
           objectIsReplaced = true;
         }
       }
 
       if (handle != null)
       {
-        // pass arguments
-        var args = currentObjectName.Split(new[] { ' ' }, 2);
-        if(args.Length > 1)
-        {
-          View.Handler.PassArgument(handle, args[1]);
-        } else
-        {
-          View.Handler.PassArgument(handle, "");
-        }
-
-        ObjectType newType = View.Handler.GetObjectType(handle);
+        ObjectType newType = Interface.Handle.GetObjectType(handle);
         if (newType != Type)
         {
           Type = newType;
           SwitchGui();
         }
+        
+        // pass arguments
+        var args = currentObjectName.Split(new[] { ' ' }, 2);
+        if (args.Length > 1)
+        {
+          Interface.Handle.PassArgument(handle, args[1]);
+          GuiShape.EvaluateArguments(args[1]);
+        }
+        else
+        {
+          Interface.Handle.PassArgument(handle, "");
+          GuiShape.EvaluateArguments("");
+        }
 
         // set inlets and outlets
-        GuiShape.Inputs = View.Handler.GetObjectInputCount(handle);
-        GuiShape.Outputs = View.Handler.GetObjectOutputCount(handle);
-        objID = View.Handler.GetObjectID(handle);
+        GuiShape.Inputs = Interface.Handle.GetObjectInputCount(handle);
+        GuiShape.Outputs = Interface.Handle.GetObjectOutputCount(handle);
+
+
+        objID = Interface.Handle.GetObjectID(handle);
       } else
       {
         Type = ObjectType.BASE;
@@ -193,6 +196,16 @@ namespace YapView
             GuiShape = new Gui.ToggleCtrl(GuiShape.Rect.Location, this);
             break;
           }
+        case ObjectType.COUNTER:
+          {
+            GuiShape = new Gui.CounterCtrl(GuiShape.Rect.Location, this);
+            break;
+          }
+        case ObjectType.MESSAGE:
+          {
+            GuiShape = new Gui.MessageCtrl(GuiShape.Rect.Location, this);
+            break;
+          }
         default:
           {
             GuiShape = new Gui.BasicCtrl(GuiShape.Rect.Location, this);
@@ -217,7 +230,7 @@ namespace YapView
     public string GetGuiValue()
     {
       if (handle == null) return "";
-      return View.Handler.GetGuiValue(handle);
+      return Interface.Handle.GetGuiValue(handle);
     }
 
     public void Deselect()
@@ -231,7 +244,7 @@ namespace YapView
     {
       if(handle != null)
       {
-        View.Handler.DeleteObject(handle);
+        Interface.Handle.DeleteObject(handle);
       }
       handle = null;
     }

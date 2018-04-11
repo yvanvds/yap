@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace YapView.Gui
 {
-  public abstract class Base
+  public abstract class GuiObject
   {
     protected Object obj;
     protected SKRect rect;
@@ -72,12 +72,14 @@ namespace YapView.Gui
     public int CarretPos { get; set; } = 0;
 
 
-    public Base(SKPoint pos, Object obj)
+    public GuiObject(SKPoint pos, Object obj)
     {
       this.obj = obj;
-      rect = new SKRect();
-      rect.Left = pos.X;
-      rect.Top = pos.Y;
+      rect = new SKRect
+      {
+        Left = pos.X,
+        Top = pos.Y
+      };
 
       Inputs = 0;
       Outputs = 0;
@@ -174,9 +176,11 @@ namespace YapView.Gui
       return CarretPos;
     }
 
+    public virtual void EvaluateArguments(string args) { }
+
     public virtual bool OnMouseDown(SKPoint mousePos)
     {
-      if (obj.View.PerformanceMode)
+      if (Interface.PerformanceMode)
       {
         if(HasEditableGui)
         {
@@ -237,10 +241,12 @@ namespace YapView.Gui
         input.Clear();
         for (int i = 0; i < input.Capacity; i++)
         {
-          SKRect r = new SKRect();
-          r.Left = left;
-          r.Top = top;
-          r.Size = new SKSize(inputWidth, inputHeight);
+          SKRect r = new SKRect
+          {
+            Left = left,
+            Top = top,
+            Size = new SKSize(inputWidth, inputHeight)
+          };
           input.Add(r);
 
           left += inputWidth + blankSpace;
@@ -263,10 +269,12 @@ namespace YapView.Gui
         output.Clear();
         for (int i = 0; i < output.Capacity; i++)
         {
-          SKRect r = new SKRect();
-          r.Left = left;
-          r.Top = top;
-          r.Size = new SKSize(outputWidth, outputHeight);
+          SKRect r = new SKRect
+          {
+            Left = left,
+            Top = top,
+            Size = new SKSize(outputWidth, outputHeight)
+          };
           output.Add(r);
 
           left += outputWidth + blankSpace;
@@ -312,7 +320,7 @@ namespace YapView.Gui
 
     public void DrawPins(SKCanvas canvas)
     {
-      if (obj.View.PerformanceMode) return;
+      if (Interface.PerformanceMode) return;
 
       canvas.DrawLine(rect.Left, rect.Top + 2, rect.Right, rect.Top + 2, Paint.ObjectBorder);
       canvas.DrawLine(rect.Left, rect.Bottom - 2, rect.Right, rect.Bottom - 2, Paint.ObjectBorder);

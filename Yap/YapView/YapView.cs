@@ -22,11 +22,6 @@ namespace YapView
 
   public class YapView : SkiaSharp.Views.WPF.SKElement
   {
-    // callback interface which will be used to interact
-    // with an external object library like YSE
-    IYapHandler handler = null;
-    public IYapHandler Handler { get => handler; }
-
     // The yap view presents objects and connections
     // between objects.
     Connections Connections = null;
@@ -43,29 +38,14 @@ namespace YapView
     // Canvas will be updated every 50 milliseconds
     DispatcherTimer UpdateCanvas = new DispatcherTimer(DispatcherPriority.Render);
 
-    // objects and connections behave differently in
-    // edit and performance mode
-    private bool performanceMode = false;
-    public bool PerformanceMode
-    {
-      get => performanceMode;
-      set
-      {
-        performanceMode = value;
-        Objects.Deselect();
-        Connections.Deselect();
-      }
-    }
-
     
     static YapView()
     {
       DefaultStyleKeyProperty.OverrideMetadata(typeof(YapView), new FrameworkPropertyMetadata(typeof(YapView)));
     }
     
-    public void Init(IYapHandler Handler)
+    public void Init()
     {
-      this.handler = Handler;
       Objects = new Objects(this);
       Connections = new Connections(this);
 
@@ -78,17 +58,18 @@ namespace YapView
     {
       Connections.Clear();
       Objects.Clear();
-      Handler.Clear();
-      Handler.Load(JSONContent);
+      Interface.Handle.Clear();
+      Interface.Handle.Load(JSONContent);
 
-      uint num = Handler.NumObjects();
+      uint num = Interface.Handle.NumObjects();
 
       // load objects
       for(uint i = 0; i < num; i++)
       {
-        object obj = Handler.GetObjectFromList(i);
+        object obj = Interface.Handle.GetObjectFromList(i);
         float x, y;
-        Handler.GetPosition(obj, out x, out y);
+        x = float.Parse(Interface.Handle.GetGuiProperty(obj, Gui.Properties.POSX));
+        y = float.Parse(Interface.Handle.GetGuiProperty(obj, Gui.Properties.POSY));
         Object O = Objects.Add(new SKPoint(x, y), obj);
         O.GetValuesFromHandle();
       }
@@ -98,11 +79,11 @@ namespace YapView
       {
         for(uint outlet = 0; outlet < O.GuiShape.Outputs; outlet++)
         {
-          uint connections = Handler.GetConnections(O.handle, outlet);
+          uint connections = Interface.Handle.GetConnections(O.handle, outlet);
           for(uint j = 0; j < connections; j++)
           {
-            uint ObjID = Handler.GetConnectionTarget(O.handle, outlet, j);
-            uint inlet = Handler.GetConnectionTargetInlet(O.handle, outlet, j);
+            uint ObjID = Interface.Handle.GetConnectionTarget(O.handle, outlet, j);
+            uint inlet = Interface.Handle.GetConnectionTargetInlet(O.handle, outlet, j);
 
             Object I = Objects.GetObjectWithID(ObjID);
             if(I != null)
@@ -117,7 +98,7 @@ namespace YapView
     public string Save()
     {
       Objects.StorePositions();
-      return Handler.Save();
+      return Interface.Handle.Save();
     }
 
     /*
@@ -137,7 +118,7 @@ namespace YapView
 
       canvas.Clear(SKColors.DimGray);
 
-      if(PerformanceMode)
+      if(Interface.PerformanceMode)
       {
         Connections.Draw(canvas);
         Objects.Draw(canvas);
@@ -175,9 +156,11 @@ namespace YapView
       MouseIsDown = true;
       e.Handled = true;
 
-      SKPoint pos = new SKPoint();
-      pos.X = (float)e.GetPosition(this).X;
-      pos.Y = (float)e.GetPosition(this).Y;
+      SKPoint pos = new SKPoint
+      {
+        X = (float)e.GetPosition(this).X,
+        Y = (float)e.GetPosition(this).Y
+      };
       MousePos = pos;
 
       Connections.Deselect();
@@ -208,7 +191,7 @@ namespace YapView
       }
 
       // connections are only handled in edit mode
-      if (PerformanceMode) return;
+      if (Interface.PerformanceMode) return;
 
       // try to create or select a connection
       if(TryStartConnection(pos))
@@ -224,9 +207,11 @@ namespace YapView
     {
       if (Connections.IsBeingCreated())
       {
-        SKPoint pos = new SKPoint();
-        pos.X = (float)e.GetPosition(this).X;
-        pos.Y = (float)e.GetPosition(this).Y;
+        SKPoint pos = new SKPoint
+        {
+          X = (float)e.GetPosition(this).X,
+          Y = (float)e.GetPosition(this).Y
+        };
 
         foreach (var obj in Objects.List)
         {
@@ -246,11 +231,13 @@ namespace YapView
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
-      SKPoint pos = new SKPoint();
-      pos.X = (float)e.GetPosition(this).X;
-      pos.Y = (float)e.GetPosition(this).Y;
+      SKPoint pos = new SKPoint
+      {
+        X = (float)e.GetPosition(this).X,
+        Y = (float)e.GetPosition(this).Y
+      };
 
-      if (PerformanceMode)
+      if (Interface.PerformanceMode)
       {
         if(MouseIsDown)
         {
@@ -308,7 +295,7 @@ namespace YapView
 
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
-      if(PerformanceMode)
+      if(Interface.PerformanceMode)
       {
         if(Objects.BelowMouse != null)
         {
@@ -320,7 +307,7 @@ namespace YapView
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
-      if(PerformanceMode)
+      if(Interface.PerformanceMode)
       {
         if(Objects.Current != null && Objects.Current.GuiShape.GuiEditMode)
         {
@@ -362,6 +349,12 @@ namespace YapView
         Objects.Add(new SKPoint(0, 0));
       }
       SEdit.Edit(Objects.Current.GuiShape.Text, 0, EditModeStyle.Line);
+    }
+
+    public void Deselect()
+    {
+      Objects.Deselect();
+      Connections.Deselect();
     }
 
     public void Clear()

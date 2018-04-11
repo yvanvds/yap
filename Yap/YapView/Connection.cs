@@ -52,7 +52,7 @@ namespace YapView
       this.inlet = inlet;
       isComplete = true;
 
-      if(connect) View.Handler.Connect(Start.handle, this.outlet, End.handle, this.inlet);
+      if(connect) Interface.Handle.Connect(Start.handle, this.outlet, End.handle, this.inlet);
     }
 
     public bool IsConnected(Object obj)
@@ -113,7 +113,7 @@ namespace YapView
     {
       if (isComplete)
       {
-        View.Handler.Disconnnect(Start.handle, outlet, End.handle, inlet);
+        Interface.Handle.Disconnnect(Start.handle, outlet, End.handle, inlet);
       }
       isComplete = false;
     }

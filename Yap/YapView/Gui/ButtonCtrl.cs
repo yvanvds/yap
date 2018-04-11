@@ -7,7 +7,7 @@ using SkiaSharp;
 
 namespace YapView.Gui
 {
-  class ButtonCtrl : Base
+  class ButtonCtrl : GuiObject
   {
     int blink = 0;
 
@@ -49,7 +49,7 @@ namespace YapView.Gui
     {
       if(!base.OnMouseDown(mousePos))
       {
-        obj.View.Handler.SendBang(obj.handle);
+        Interface.Handle.SendBang(obj.handle);
       }
       return true;
     }

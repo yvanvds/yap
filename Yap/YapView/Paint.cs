@@ -160,5 +160,26 @@ namespace YapView
       StrokeWidth = 2f,
       Color = new SKColor(80, 80, 100)
     };
+
+    public static SKPaint MessageBorder = new SKPaint()
+    {
+      Style = SKPaintStyle.Stroke,
+      StrokeWidth = 2f,
+      Color = new SKColor(74, 130, 217),
+    };
+
+    public static SKPaint MessageBorderBlink = new SKPaint()
+    {
+      Style = SKPaintStyle.Stroke,
+      StrokeWidth = 2f,
+      Color = new SKColor(94, 150, 237),
+    };
+
+    public static SKPaint Message = new SKPaint()
+    {
+      Color = new SKColor(94, 150, 237),
+      Typeface = SKTypeface.FromFamilyName("arial"),
+      TextSize = 12
+    };
   }
 }

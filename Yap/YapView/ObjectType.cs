@@ -14,5 +14,7 @@ namespace YapView
     SLIDER,
     BUTTON,
     TOGGLE,
+    COUNTER,
+    MESSAGE,
   }
 }

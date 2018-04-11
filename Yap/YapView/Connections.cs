@@ -51,9 +51,11 @@ namespace YapView
       List.Add(new Connection(View));
       Current = List.Last();
       Current.SetStart(obj, outlet);
-      Point p = new Point();
-      p.X = pos.X;
-      p.Y = pos.Y;
+      Point p = new Point
+      {
+        X = pos.X,
+        Y = pos.Y
+      };
       Current.SetMousePos(p);
     }
 

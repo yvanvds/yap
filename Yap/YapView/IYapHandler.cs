@@ -21,8 +21,8 @@ namespace YapView
 
     void PassArgument(object obj, string args);
 
-    void GetPosition(object obj, out float X, out float Y);
-    void SetPosition(object obj, float X, float Y);
+    string GetGuiProperty(object obj, string key);
+    void SetGuiProperty(object obj, string key, string value);
 
     uint NumObjects();
     object GetObjectFromList(uint obj);
@@ -40,6 +40,7 @@ namespace YapView
     void SendBang(object obj);
     void SendIntData(object obj, int value);
     void SendFloatData(object obj, float value);
+    void SendStringData(object obj, string value);
 
     string GetGuiValue(object obj);
     ObjectType GetObjectType(object obj);

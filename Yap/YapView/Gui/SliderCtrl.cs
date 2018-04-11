@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace YapView.Gui
 {
-  class SliderCtrl : Base
+  class SliderCtrl : GuiObject
   {
     float sliderPos = 0;
 
@@ -59,8 +59,8 @@ namespace YapView.Gui
     {
       float delta = e.Delta > 0 ? 0.05f : -0.05f;
       sliderPos += delta;
-      
-      obj.View.Handler.SendFloatData(obj.handle, sliderPos);
+
+      Interface.Handle.SendFloatData(obj.handle, sliderPos);
     }
 
     public override bool OnMouseDown(SKPoint mousePos)
@@ -70,7 +70,7 @@ namespace YapView.Gui
         float pos = mousePos.X - rect.Left;
         pos /= rect.Width;
         sliderPos = pos;
-        obj.View.Handler.SendFloatData(obj.handle, sliderPos);
+        Interface.Handle.SendFloatData(obj.handle, sliderPos);
       }
       return true;
     }
@@ -80,7 +80,7 @@ namespace YapView.Gui
       float pos = mousePos.X - rect.Left;
       pos /= rect.Width;
       sliderPos = pos;
-      obj.View.Handler.SendFloatData(obj.handle, sliderPos);
+      Interface.Handle.SendFloatData(obj.handle, sliderPos);
     }
   }
 }

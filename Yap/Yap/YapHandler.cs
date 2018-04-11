@@ -67,22 +67,6 @@ namespace Yap
       ((IHandle)name).SetArgs(args);
     }
 
-    public void GetPosition(object obj, out float X, out float Y)
-    {
-      Pos p = ((IHandle)obj).GetPosition();
-      X = p.X;
-      Y = p.Y;
-    }
-
-    public void SetPosition(object obj, float X, float Y)
-    {
-      if (obj == null) return;
-      Pos p = new Pos();
-      p.X = X;
-      p.Y = Y;
-      ((IHandle)obj).SetPosition(p);
-    }
-
     public uint NumObjects()
     {
       return patcher.NumObjects();
@@ -138,6 +122,11 @@ namespace Yap
       ((IHandle)obj).SetFloatData(0, value);
     }
 
+    public void SendStringData(object obj, string value)
+    {
+      ((IHandle)obj).SetListData(0, value);
+    }
+
     public string GetGuiValue(object obj)
     {
       return ((IHandle)obj).GetGuiValue();
@@ -152,9 +141,20 @@ namespace Yap
         case ".slider": return YapView.ObjectType.SLIDER;
         case ".b": return YapView.ObjectType.BUTTON;
         case ".t": return YapView.ObjectType.TOGGLE;
+        case ".counter": return YapView.ObjectType.COUNTER;
+        case ".m": return YapView.ObjectType.MESSAGE;
         default: return YapView.ObjectType.BASE;
       }
     }
 
+    public string GetGuiProperty(object obj, string key)
+    {
+      return ((IHandle)obj).GetGuiProperty(key);
+    }
+
+    public void SetGuiProperty(object obj, string key, string value)
+    {
+      ((IHandle)obj).SetGuiProperty(key, value);
+    }
   }
 }

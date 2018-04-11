@@ -7,7 +7,7 @@ using SkiaSharp;
 
 namespace YapView.Gui
 {
-  class BasicCtrl : Base
+  class BasicCtrl : GuiObject
   {
     
 

@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace YapView.Gui
 {
-  class IntCtrl : Base
+  class IntCtrl : GuiObject
   {
     int previousMousePos;
 
@@ -26,7 +26,6 @@ namespace YapView.Gui
     public override void DrawGui(SKCanvas canvas)
     {
       canvas.DrawRect(rect, Paint.IntBackground);
-      canvas.DrawRect(rect, Paint.ObjectBorder);
 
       DrawPins(canvas);
 
@@ -61,7 +60,7 @@ namespace YapView.Gui
         posX -= 5;
       }
       value += (int)(delta * multiplier);
-      obj.View.Handler.SendIntData(obj.handle, value);
+      Interface.Handle.SendIntData(obj.handle, value);
     }
 
     public override bool OnMouseDown(SKPoint mousePos)
@@ -77,8 +76,8 @@ namespace YapView.Gui
     {
       int value = Int32.Parse(guiValue);
       int add = (int)((previousMousePos - mousePos.Y));
-      
-      obj.View.Handler.SendIntData(obj.handle, value + add);
+
+      Interface.Handle.SendIntData(obj.handle, value + add);
       previousMousePos = (int)mousePos.Y;
     }
 
@@ -87,7 +86,7 @@ namespace YapView.Gui
       try
       {
         int i = Int32.Parse(value);
-        obj.View.Handler.SendIntData(obj.handle, i);
+        Interface.Handle.SendIntData(obj.handle, i);
       } catch (FormatException)
       {
 

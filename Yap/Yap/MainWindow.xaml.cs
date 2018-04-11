@@ -47,7 +47,7 @@ namespace Yap
       sound = YseObj.CreateSound();
       patcher = YseObj.CreatePatcher();
       patcher.Create(1);
-      Handler = new YapHandler(patcher);
+      YapView.Interface.Handle = new YapHandler(patcher);
 
       sound.Create(patcher);
       sound.Play();
@@ -55,7 +55,7 @@ namespace Yap
 
       yap.Focusable = true;
       yap.Focus();
-      yap.Init(Handler);
+      yap.Init();
 
       
     }
@@ -167,8 +167,9 @@ namespace Yap
 
     private void PerformCommand_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-      yap.PerformanceMode = !yap.PerformanceMode;
-      Perform.IsChecked = yap.PerformanceMode;
+      yap.Deselect();
+      YapView.Interface.PerformanceMode = !YapView.Interface.PerformanceMode;
+      Perform.IsChecked = YapView.Interface.PerformanceMode;
     }
   }
 }

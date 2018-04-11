@@ -144,7 +144,7 @@ namespace YapView
 
     public Object Add(SkiaSharp.SKPoint pos, object obj = null)
     {
-      List.Add(new Object(pos, View, obj));
+      List.Add(new Object(pos, obj));
       Current = List.Last();
       return Current;
     }
