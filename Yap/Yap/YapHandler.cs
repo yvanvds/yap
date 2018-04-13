@@ -129,6 +129,7 @@ namespace Yap
 
     public string GetGuiValue(object obj)
     {
+      if(obj == null) return "";
       return ((IHandle)obj).GetGuiValue();
     }
 

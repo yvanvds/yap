@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace YapView
 {
-  public class Connections
+  internal class Connections
   {
     ObservableCollection<Connection> List = new ObservableCollection<Connection>();
     YapView View;
@@ -46,7 +46,7 @@ namespace YapView
       return false;
     }
 
-    public void Add(Object obj, uint outlet, SKPoint pos)
+    public void Add(WidgetHolder obj, uint outlet, SKPoint pos)
     {
       List.Add(new Connection(View));
       Current = List.Last();
@@ -59,7 +59,7 @@ namespace YapView
       Current.SetMousePos(p);
     }
 
-    public void Add(Object start, uint outlet, Object end, uint inlet)
+    public void Add(WidgetHolder start, uint outlet, WidgetHolder end, uint inlet)
     {
       List.Add(new Connection(View));
       List.Last().SetStart(start, outlet);
@@ -82,6 +82,12 @@ namespace YapView
       }
     }
 
+    public void Delete(Connection conn)
+    {
+      conn.Disconnect();
+      List.Remove(conn);
+    }
+
     public void Clear()
     {
       foreach(var connection in List)
@@ -93,11 +99,11 @@ namespace YapView
       List.Clear();
     }
 
-    public void TrySetCurrentEnd(Object obj, SKPoint pos)
+    public void TrySetCurrentEnd(WidgetHolder obj, SKPoint pos)
     {
       if (Current.IsStart(obj)) return;
-      int pin = obj.GuiShape.OnInput(pos);
-      if (pin == -1 && obj.GuiShape.Inputs > 0)
+      int pin = obj.Widget.Connector.OnInput(pos);
+      if (pin == -1 && obj.Widget.Connector.Inputs > 0)
       {
         pin = 0;
       }
@@ -112,7 +118,7 @@ namespace YapView
       }
     }
 
-    public void RemoveConnectedTo(Object obj)
+    public void RemoveConnectedTo(WidgetHolder obj)
     {
       for (int i = List.Count - 1; i >= 0; i--)
       {

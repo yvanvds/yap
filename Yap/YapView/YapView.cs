@@ -24,21 +24,21 @@ namespace YapView
   {
     // The yap view presents objects and connections
     // between objects.
-    Connections Connections = null;
-    Objects Objects = null;
-
-    // Skia does not have input handling on its own.
-    // The String Editor enables us to build objects with
-    // user text input.
-    StringEditor SEdit = new StringEditor();
+    internal Connections Connections = null;
+    internal Widgets Widgets = null;
 
     bool MouseIsDown = false;
-    SKPoint MousePos = new SKPoint();
+
+    SKPoint mousePos = new SKPoint();
+    public SKPoint MousePos => mousePos;
+    WidgetHolder WidgetBelowMouse = null;
+    Connection ConnectionBelowMouse = null;
 
     // Canvas will be updated every 50 milliseconds
     DispatcherTimer UpdateCanvas = new DispatcherTimer(DispatcherPriority.Render);
 
-    
+    Selector Selector;
+
     static YapView()
     {
       DefaultStyleKeyProperty.OverrideMetadata(typeof(YapView), new FrameworkPropertyMetadata(typeof(YapView)));
@@ -46,8 +46,9 @@ namespace YapView
     
     public void Init()
     {
-      Objects = new Objects(this);
+      Widgets = new Widgets(this);
       Connections = new Connections(this);
+      Selector = new Selector(this);
 
       UpdateCanvas.Interval = new TimeSpan(0, 0, 0, 0, 50);
       UpdateCanvas.Tick += new EventHandler(UpdateCanvas_Elapsed);
@@ -57,7 +58,7 @@ namespace YapView
     public void Load(string JSONContent)
     {
       Connections.Clear();
-      Objects.Clear();
+      Widgets.Clear();
       Interface.Handle.Clear();
       Interface.Handle.Load(JSONContent);
 
@@ -67,25 +68,23 @@ namespace YapView
       for(uint i = 0; i < num; i++)
       {
         object obj = Interface.Handle.GetObjectFromList(i);
-        float x, y;
-        x = float.Parse(Interface.Handle.GetGuiProperty(obj, Gui.Properties.POSX));
-        y = float.Parse(Interface.Handle.GetGuiProperty(obj, Gui.Properties.POSY));
-        Object O = Objects.Add(new SKPoint(x, y), obj);
-        O.GetValuesFromHandle();
+        
+        WidgetHolder holder = Widgets.Add(new SKPoint(0, 0), obj);
+        holder.Load();
       }
 
       // load connections
-      foreach(Object O in Objects.List)
+      foreach(WidgetHolder O in Widgets.List)
       {
-        for(uint outlet = 0; outlet < O.GuiShape.Outputs; outlet++)
+        for(uint outlet = 0; outlet < O.Widget.Connector.Outputs; outlet++)
         {
-          uint connections = Interface.Handle.GetConnections(O.handle, outlet);
+          uint connections = Interface.Handle.GetConnections(O.Handle, outlet);
           for(uint j = 0; j < connections; j++)
           {
-            uint ObjID = Interface.Handle.GetConnectionTarget(O.handle, outlet, j);
-            uint inlet = Interface.Handle.GetConnectionTargetInlet(O.handle, outlet, j);
+            uint ObjID = Interface.Handle.GetConnectionTarget(O.Handle, outlet, j);
+            uint inlet = Interface.Handle.GetConnectionTargetInlet(O.Handle, outlet, j);
 
-            Object I = Objects.GetObjectWithID(ObjID);
+            WidgetHolder I = Widgets.Get(ObjID);
             if(I != null)
             {
               Connections.Add(O, outlet, I, inlet);
@@ -97,7 +96,7 @@ namespace YapView
 
     public string Save()
     {
-      Objects.StorePositions();
+      Widgets.Save();
       return Interface.Handle.Save();
     }
 
@@ -107,7 +106,7 @@ namespace YapView
 
     private void UpdateCanvas_Elapsed(object sender, EventArgs e)
     {
-      Objects.UpdateGui();
+      Widgets.Update();
       InvalidateVisual();
     }
 
@@ -121,10 +120,10 @@ namespace YapView
       if(Interface.PerformanceMode)
       {
         Connections.Draw(canvas);
-        Objects.Draw(canvas);
+        Widgets.Draw(canvas);
       } else
       {
-        Objects.Draw(canvas);
+        Widgets.Draw(canvas);
         Connections.Draw(canvas);
       }
       
@@ -132,11 +131,12 @@ namespace YapView
 
     private bool TryStartConnection(SKPoint pos)
     {
-      if (Objects.Current == null) return false;
-      int pin = Objects.Current.GuiShape.OnOutput(pos);
+      if (WidgetBelowMouse == null) return false;
+      int pin = WidgetBelowMouse.Widget.Connector.OnOutput(pos);
+
       if (pin != -1)
       {
-        Connections.Add(Objects.Current, (uint)pin, pos);
+        Connections.Add(WidgetBelowMouse, (uint)pin, pos);
         return true;
       }
       return false;
@@ -156,50 +156,25 @@ namespace YapView
       MouseIsDown = true;
       e.Handled = true;
 
-      SKPoint pos = new SKPoint
+      if(WidgetBelowMouse != null)
       {
-        X = (float)e.GetPosition(this).X,
-        Y = (float)e.GetPosition(this).Y
-      };
-      MousePos = pos;
-
-      Connections.Deselect();
-
-      Object previous = Objects.Current;
-
-      if(Objects.TrySetCurrent())
-      {
-        // clear selected state unless the same item is clicked twice in a row
-        if(previous != Objects.Current)
+        int outlet = WidgetBelowMouse.Widget.Connector.OnOutput(mousePos);
+        if (!Interface.PerformanceMode && outlet > -1)
         {
-          if(previous != null) previous.Deselect();
-          Objects.Current.Deselect();
-        }
-        // let object handle the click
-        Objects.Current.OnMouseLeftButtonDown(pos);
-      } else
-      {
-        if (previous != null)
+          Connections.Add(WidgetBelowMouse, (uint)outlet, mousePos);
+        } else
         {
-          Objects.EndEditMode();
-          if (previous.HasChanged() && previous.Reconfigure())
-          {
-            Connections.RemoveConnectedTo(previous);
-          }
-          Objects.Deselect();
+          WidgetBelowMouse.Widget.OnMouseDown(e);
+          Selector.Select(WidgetBelowMouse);
         }
       }
-
-      // connections are only handled in edit mode
-      if (Interface.PerformanceMode) return;
-
-      // try to create or select a connection
-      if(TryStartConnection(pos))
+      else if(ConnectionBelowMouse != null)
       {
-        Objects.Deselect();
+        Selector.Select(ConnectionBelowMouse);
       }
-      else {
-        Connections.TrySelectBelowMouse();
+      else
+      {
+        Selector.CanvasClicked();
       }
     }
 
@@ -213,15 +188,18 @@ namespace YapView
           Y = (float)e.GetPosition(this).Y
         };
 
-        foreach (var obj in Objects.List)
+        foreach (var holder in Widgets.List)
         {
-          if (obj.GuiShape.IsInside(pos))
+          if (holder.Widget.Contains(pos))
           {
-            Connections.TrySetCurrentEnd(obj, pos);
+            Connections.TrySetCurrentEnd(holder, pos);
             break;
           }
         }
         Connections.DeleteCurrent();
+      } else
+      {
+        Selector.OnMouseLeftButtonUp(e);
       }
       MouseIsDown = false;
       e.Handled = true;
@@ -231,136 +209,63 @@ namespace YapView
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
-      SKPoint pos = new SKPoint
-      {
-        X = (float)e.GetPosition(this).X,
-        Y = (float)e.GetPosition(this).Y
-      };
+      mousePos.X = (float)e.GetPosition(this).X;
+      mousePos.Y = (float)e.GetPosition(this).Y;
 
-      if (Interface.PerformanceMode)
+      if (WidgetBelowMouse != null) WidgetBelowMouse.Widget.BelowMouse = false;
+      WidgetBelowMouse = Widgets.At(MousePos);
+      if (WidgetBelowMouse != null) WidgetBelowMouse.Widget.BelowMouse = true;
+
+      Connections.SetBelowMouse(MousePos);
+      ConnectionBelowMouse = Connections.BelowMouse;
+
+      if (Connections.IsBeingCreated())
       {
-        if(MouseIsDown)
-        {
-          if(Objects.Current != null)
-          {
-            Objects.Current.GuiShape.OnMouseMove(pos);
-          }
-        } else
-        {
-          Objects.SetBelowMouse(pos);
-        }
-        return;
+        Connections.Current.SetMousePos(e.GetPosition(this));
       }
 
-      // else:
-
-
-      // find connection or object below mouse
-      Objects.SetBelowMouse(pos);
-      if(Objects.BelowMouse != null)
-      {
-        if(Objects.BelowMouse.GuiShape.OnOutput(pos) != -1)
-        {
-          Connections.BelowMouse = null;
-        } else
-        {
-          Connections.SetBelowMouse(pos);
-          if(Connections.BelowMouse != null)
-          {
-            Objects.BelowMouse = null;
-          }
-        }
-      } else
-      {
-        Connections.SetBelowMouse(pos);
-      }
-
-      // connections get precendence on hover
-      if (MouseIsDown)
-      {
-        if (Objects.Current != null)
-        {
-          SKPoint delta = (pos - MousePos);
-          Objects.Current.Move(delta);
-        }
-        else if (Connections.IsBeingCreated())
-        {
-          Connections.Current.SetMousePos(e.GetPosition(this));
-        }
-        e.Handled = true;
-      }
-      // important: we also need the mouse position to add new objects
-      MousePos = pos;
+      if(MouseIsDown) Selector.OnMouseMove(e);
     }
 
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
-      if(Interface.PerformanceMode)
+      if(WidgetBelowMouse != null)
       {
-        if(Objects.BelowMouse != null)
-        {
-          float pos = (float)e.GetPosition(this).X;
-          Objects.BelowMouse.OnMouseWheel(e, pos);
-        }
+        WidgetBelowMouse.Widget.OnMouseWheel(e);
       }
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
-      if(Interface.PerformanceMode)
-      {
-        if(Objects.Current != null && Objects.Current.GuiShape.GuiEditMode)
-        {
-          string text = SEdit.Update(e.Key);
-          Objects.Current.GuiShape.GuiValue = text;
-          Objects.Current.GuiShape.CarretPos = SEdit.Pos;
-        }
-        return;
-      }
+      Selector.OnKeyDown(e);
+    }
 
-      if (Objects.InEditMode())
-      {
-        string text = SEdit.Update(e.Key);
-        Objects.UpdateEditMode(text, SEdit.Pos);
-      }
-
-      else if (e.Key == Key.Delete || e.Key == Key.Back)
-      {
-        if (Objects.Current != null)
-        {
-          Connections.RemoveConnectedTo(Objects.Current);
-          Objects.DeleteCurrent();
-        }
-        else 
-        {
-          Connections.DeleteCurrent();
-        }
-      }
+    protected override void OnKeyUp(KeyEventArgs e)
+    {
+      Selector.OnKeyUp(e);
     }
 
     // patcher edits
     public void AddObject(bool onMousePos)
     {
-      if (onMousePos)
-      {
-        Objects.Add(MousePos);
-      } else
-      {
-        Objects.Add(new SKPoint(0, 0));
-      }
-      SEdit.Edit(Objects.Current.GuiShape.Text, 0, EditModeStyle.Line);
+      SKPoint pos;
+      if (onMousePos) pos = MousePos;
+      else pos = new SKPoint(0, 0);
+      
+      Widgets.Add(pos);
+      Selector.Select(Widgets.List.Last());
+      Widgets.List.Last().Widget.EnableEditor(pos);
     }
 
     public void Deselect()
     {
-      Objects.Deselect();
-      Connections.Deselect();
+      Selector.Clear();
     }
 
     public void Clear()
     {
       Connections.Clear();
-      Objects.Clear();
+      Widgets.Clear();
     }
   }
 }

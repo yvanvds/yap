@@ -9,6 +9,11 @@ namespace YapView
 {
   public static class MathTools
   {
+    public static float FindDistance(SKPoint a, SKPoint b)
+    {
+      return (float)Math.Sqrt(Math.Pow((b.X - a.X), 2) + Math.Pow((b.Y - a.Y), 2));
+    }
+
     public static float FindDistance(SKPoint lineStart, SKPoint lineEnd, SKPoint point, out SKPoint closest)
     {
       float dx = lineEnd.X - lineStart.X;

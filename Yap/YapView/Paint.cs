@@ -56,10 +56,10 @@ namespace YapView
       TextSize = 12
     };
 
-    public static SKPaint TextIntCtrl = new SKPaint()
+    public static SKPaint TextInt = new SKPaint()
     {
       Color = SKColors.CadetBlue,
-      Typeface = SKTypeface.FromFamilyName("consolas"),
+      Typeface = SKTypeface.FromFamilyName("arial"),
       TextSize = 12
     };
 
@@ -103,6 +103,12 @@ namespace YapView
       Color = SKColors.BlueViolet
     };
 
+    public static SKPaint InvalidBackground = new SKPaint()
+    {
+      Style = SKPaintStyle.StrokeAndFill,
+      Color = new SKColor(204, 134, 14)
+    };
+
     public static SKPaint SliderBackground = new SKPaint()
     {
       Style = SKPaintStyle.StrokeAndFill,
@@ -128,6 +134,25 @@ namespace YapView
       Color = new SKColor(0, 0, 50),
     };
 
+    public static SKPaint HandlerBackground = new SKPaint()
+    {
+      Style = SKPaintStyle.Fill,
+      Color = new SKColor(155, 155, 155),
+    };
+
+    public static SKPaint HandlerActiveBackground = new SKPaint()
+    {
+      Style = SKPaintStyle.Fill,
+      Color = new SKColor(255, 255, 255),
+    };
+
+    public static SKPaint HandlerBorder = new SKPaint()
+    {
+      Style = SKPaintStyle.Stroke,
+      StrokeWidth = 1f,
+      Color = new SKColor(180, 180, 220),
+    };
+
     public static SKPaint ButtonBackground = new SKPaint()
     {
       Style = SKPaintStyle.StrokeAndFill,
@@ -150,6 +175,7 @@ namespace YapView
     public static SKPaint ToggleOn = new SKPaint()
     {
       Style = SKPaintStyle.Stroke,
+      StrokeCap = SKStrokeCap.Round,
       StrokeWidth = 2f,
       Color = new SKColor(94, 150, 237)
     };
@@ -158,6 +184,7 @@ namespace YapView
     {
       Style = SKPaintStyle.Stroke,
       StrokeWidth = 2f,
+      StrokeCap = SKStrokeCap.Round,
       Color = new SKColor(80, 80, 100)
     };
 

@@ -8,12 +8,12 @@ using System.Windows;
 
 namespace YapView
 {
-  public class Connection
+  internal class Connection
   {
-    Object Start = null;
+    WidgetHolder Start = null;
     uint outlet;
 
-    Object End = null;
+    WidgetHolder End = null;
     uint inlet;
 
     YapView View;
@@ -34,28 +34,28 @@ namespace YapView
       this.View = View;
     }
 
-    public void SetStart(Object obj, uint outlet)
+    public void SetStart(WidgetHolder obj, uint outlet)
     {
       Start = obj;
       this.outlet = outlet;
       isComplete = false;
     }
 
-    public bool IsStart(Object obj)
+    public bool IsStart(WidgetHolder obj)
     {
       return Start == obj;
     }
 
-    public void SetEnd(Object obj, uint inlet, bool connect = true)
+    public void SetEnd(WidgetHolder obj, uint inlet, bool connect = true)
     {
       End = obj;
       this.inlet = inlet;
       isComplete = true;
 
-      if(connect) Interface.Handle.Connect(Start.handle, this.outlet, End.handle, this.inlet);
+      if(connect) Interface.Handle.Connect(Start.Handle, this.outlet, End.Handle, this.inlet);
     }
 
-    public bool IsConnected(Object obj)
+    public bool IsConnected(WidgetHolder obj)
     {
       return (End == obj || Start == obj);
     }
@@ -75,16 +75,16 @@ namespace YapView
     public float DistanceToPos(SKPoint pos)
     {
       if (!isComplete) return -1f;
-      return MathTools.FindDistance(Start.GuiShape.GetOutputPos(outlet), End.GuiShape.GetInputPos(inlet), pos, out closest);
+      return MathTools.FindDistance(Start.Widget.Connector.GetOutputPos(outlet), End.Widget.Connector.GetInputPos(inlet), pos, out closest);
     }
 
     public void Draw(SKCanvas canvas)
     {
-      SKPoint start = Start.GuiShape.GetOutputPos(outlet);
+      SKPoint start = Start.Widget.Connector.GetOutputPos(outlet);
       SKPoint end;
       if (isComplete)
       {
-        end = End.GuiShape.GetInputPos(inlet);
+        end = End.Widget.Connector.GetInputPos(inlet);
       }
       else
       {
@@ -113,7 +113,7 @@ namespace YapView
     {
       if (isComplete)
       {
-        Interface.Handle.Disconnnect(Start.handle, outlet, End.handle, inlet);
+        Interface.Handle.Disconnnect(Start.Handle, outlet, End.Handle, inlet);
       }
       isComplete = false;
     }

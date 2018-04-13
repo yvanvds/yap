@@ -8,6 +8,7 @@ namespace YapView
 {
   public enum ObjectType
   {
+    INVALID,
     BASE,
     INT,
     FLOAT,
