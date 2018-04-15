@@ -10,7 +10,7 @@ using System.Windows;
 [assembly: AssemblyTitle("Yap")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Mute")]
 [assembly: AssemblyProduct("Yap")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]

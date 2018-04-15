@@ -145,6 +145,9 @@ DocProject/Help/html
 # Click-Once directory
 publish/
 
+yap-cache/
+yap-SetupFiles/
+
 # Publish Web Output
 *.[Pp]ublish.xml
 *.azurePubxml
