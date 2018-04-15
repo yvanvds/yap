@@ -169,13 +169,13 @@ namespace YapView.Gui
     {
       if (handle == null) return;
 
-      string left = Interface.Handle.GetGuiProperty(handle, Properties.POSX);
+      string left = parent.Handle.GetGuiProperty(handle, Properties.POSX);
       if(left.Length > 0)
       {
         Sizer.SetLeft(Convert.ToFloat(left));
       }
       
-      string top = Interface.Handle.GetGuiProperty(handle, Properties.POSY);
+      string top = parent.Handle.GetGuiProperty(handle, Properties.POSY);
       if(top.Length > 0)
       {
         Sizer.SetTop(Convert.ToFloat(top));
@@ -183,23 +183,23 @@ namespace YapView.Gui
 
       EvaluateWidth();
 
-      Connector.Inputs = (uint)Interface.Handle.GetObjectInputCount(handle);
-      Connector.Outputs = (uint)Interface.Handle.GetObjectOutputCount(handle);
+      Connector.Inputs = (uint)parent.Handle.GetObjectInputCount(handle);
+      Connector.Outputs = (uint)parent.Handle.GetObjectOutputCount(handle);
       Connector.Update(Sizer.Rect);
     }
 
     public virtual void Save()
     {
       if (handle == null) return;
-      Interface.Handle.SetGuiProperty(handle, Properties.POSX, Sizer.Rect.Left.ToString());
-      Interface.Handle.SetGuiProperty(handle, Properties.POSY, Sizer.Rect.Top.ToString());
+      parent.Handle.SetGuiProperty(handle, Properties.POSX, Sizer.Rect.Left.ToString());
+      parent.Handle.SetGuiProperty(handle, Properties.POSY, Sizer.Rect.Top.ToString());
     }
 
     public void Release()
     {
       if (handle != null)
       {
-        Interface.Handle.DeleteObject(handle);
+        parent.Handle.DeleteObject(handle);
       }
       handle = null;
     }

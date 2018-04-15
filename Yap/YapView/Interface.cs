@@ -13,8 +13,7 @@ namespace YapView
      * It MUST be implemented and set before using any
      * yap classes.
      */
-    static IYapHandler handler = null;
-    public static IYapHandler Handle { get => handler; set => handler = value; }
+    
 
     static bool performanceMode = false;
     public static bool PerformanceMode { get => performanceMode; set => performanceMode = value; }

@@ -124,6 +124,7 @@ namespace YapView
       {
         if (List[i].IsConnected(obj))
         {
+          List[i].Disconnect();
           List.RemoveAt(i);
         }
       }

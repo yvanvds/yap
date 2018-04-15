@@ -52,7 +52,7 @@ namespace YapView
       this.inlet = inlet;
       isComplete = true;
 
-      if(connect) Interface.Handle.Connect(Start.Handle, this.outlet, End.Handle, this.inlet);
+      if(connect) View.Handle.Connect(Start.Handle, this.outlet, End.Handle, this.inlet);
     }
 
     public bool IsConnected(WidgetHolder obj)
@@ -104,16 +104,13 @@ namespace YapView
       {
         canvas.DrawPath(path, Paint.Connection);
       }
-      
-
-      
     }
 
     public void Disconnect()
     {
       if (isComplete)
       {
-        Interface.Handle.Disconnnect(Start.Handle, outlet, End.Handle, inlet);
+        View.Handle.Disconnnect(Start.Handle, outlet, End.Handle, inlet);
       }
       isComplete = false;
     }

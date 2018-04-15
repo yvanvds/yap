@@ -57,7 +57,7 @@ namespace YapView.Gui
       base.OnMouseDown(e);
       if(Interface.PerformanceMode)
       {
-        Interface.Handle.SendBang(Handle);
+        parent.Handle.SendBang(Handle);
         highlight = 2;
       }
     }

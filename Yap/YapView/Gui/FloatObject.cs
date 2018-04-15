@@ -22,7 +22,7 @@ namespace YapView.Gui
     public override void Update()
     {
       base.Update();
-      guiValue = Interface.Handle.GetGuiValue(Handle);
+      guiValue = parent.Handle.GetGuiValue(Handle);
 
     }
 
@@ -51,7 +51,7 @@ namespace YapView.Gui
       }
 
       value += (delta * multiplier);
-      Interface.Handle.SendFloatData(Handle, value);
+      parent.Handle.SendFloatData(Handle, value);
     }
   }
 }

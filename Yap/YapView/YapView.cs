@@ -39,6 +39,9 @@ namespace YapView
 
     Selector Selector;
 
+    IYapHandler handler = null;
+    public IYapHandler Handle { get => handler; set => handler = value; }
+
     static YapView()
     {
       DefaultStyleKeyProperty.OverrideMetadata(typeof(YapView), new FrameworkPropertyMetadata(typeof(YapView)));
@@ -59,15 +62,15 @@ namespace YapView
     {
       Connections.Clear();
       Widgets.Clear();
-      Interface.Handle.Clear();
-      Interface.Handle.Load(JSONContent);
+      Handle.Clear();
+      Handle.Load(JSONContent);
 
-      uint num = Interface.Handle.NumObjects();
+      uint num = Handle.NumObjects();
 
       // load objects
       for(uint i = 0; i < num; i++)
       {
-        object obj = Interface.Handle.GetObjectFromList(i);
+        object obj = Handle.GetObjectFromList(i);
         
         WidgetHolder holder = Widgets.Add(new SKPoint(0, 0), obj);
         holder.Load();
@@ -78,11 +81,11 @@ namespace YapView
       {
         for(uint outlet = 0; outlet < O.Widget.Connector.Outputs; outlet++)
         {
-          uint connections = Interface.Handle.GetConnections(O.Handle, outlet);
+          uint connections = Handle.GetConnections(O.Handle, outlet);
           for(uint j = 0; j < connections; j++)
           {
-            uint ObjID = Interface.Handle.GetConnectionTarget(O.Handle, outlet, j);
-            uint inlet = Interface.Handle.GetConnectionTargetInlet(O.Handle, outlet, j);
+            uint ObjID = Handle.GetConnectionTarget(O.Handle, outlet, j);
+            uint inlet = Handle.GetConnectionTargetInlet(O.Handle, outlet, j);
 
             WidgetHolder I = Widgets.Get(ObjID);
             if(I != null)
@@ -97,7 +100,7 @@ namespace YapView
     public string Save()
     {
       Widgets.Save();
-      return Interface.Handle.Save();
+      return Handle.Save();
     }
 
     /*
@@ -211,6 +214,7 @@ namespace YapView
     {
       mousePos.X = (float)e.GetPosition(this).X;
       mousePos.Y = (float)e.GetPosition(this).Y;
+      
 
       if (WidgetBelowMouse != null) WidgetBelowMouse.Widget.BelowMouse = false;
       WidgetBelowMouse = Widgets.At(MousePos);

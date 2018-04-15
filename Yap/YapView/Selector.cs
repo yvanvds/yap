@@ -73,6 +73,7 @@ namespace YapView
 
       foreach (var holder in Widgets)
       {
+        view.Connections.RemoveConnectedTo(holder);
         view.Widgets.Delete(holder);
       }
       Widgets.Clear();

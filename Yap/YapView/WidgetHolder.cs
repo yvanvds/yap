@@ -37,10 +37,10 @@ namespace YapView
 
       if(handle != null)
       {
-        name = Interface.Handle.GetObjectName(handle);
-        args = Interface.Handle.GetObjectArguments(handle);
-        ID = Interface.Handle.GetObjectID(handle);
-        newType = Interface.Handle.GetObjectType(handle);
+        name = parent.Handle.GetObjectName(handle);
+        args = parent.Handle.GetObjectArguments(handle);
+        ID = parent.Handle.GetObjectID(handle);
+        newType = parent.Handle.GetObjectType(handle);
       } 
       
       if (newType != Type)
@@ -129,7 +129,7 @@ namespace YapView
             if(!newName[0].Equals(name))
             {
               Widget.Release();
-              handle = Interface.Handle.CreateObject(newName[0]);
+              handle = parent.Handle.CreateObject(newName[0]);
             }
           } else
           {
@@ -141,7 +141,7 @@ namespace YapView
           // handle is null, create a new object if possible
           if(newName.Length > 0)
           {
-            handle = Interface.Handle.CreateObject(newName[0]);
+            handle = parent.Handle.CreateObject(newName[0]);
           }
         }
 
@@ -149,11 +149,11 @@ namespace YapView
         {
           if (newName.Length > 1)
           {
-            Interface.Handle.PassArgument(handle, newName[1]);
+            parent.Handle.PassArgument(handle, newName[1]);
           }
           else
           {
-            Interface.Handle.PassArgument(handle, "");
+            parent.Handle.PassArgument(handle, "");
           }
         } 
 

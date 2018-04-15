@@ -1,26 +1,28 @@
-﻿<Window x:Class="Yap.MainWindow"
+﻿<Window x:Class="Yap.YapWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:yap="clr-namespace:YapView;assembly=YapView"
-        xmlns:local="clr-namespace:Yap"
         xmlns:commands="clr-namespace:Yap.Commands"
+        xmlns:local="clr-namespace:Yap"
         mc:Ignorable="d"
-        Title="MainWindow" Height="400" Width="600">
+        Title="YapWindow" Height="800" Width="1000">
+
   <Window.CommandBindings>
     <CommandBinding x:Name="NewCommand" Command="ApplicationCommands.New" CanExecute="NewCommand_CanExecute" Executed="NewCommand_Executed"></CommandBinding>
     <CommandBinding x:Name="OpenCommand" Command="ApplicationCommands.Open" CanExecute="OpenCommand_CanExecute" Executed="OpenCommand_Executed"></CommandBinding>
-    <CommandBinding x:Name="ExitCommand" Command="commands:AppCommands.Exit" CanExecute="ExitCommand_CanExecute" Executed="ExitCommand_Executed"></CommandBinding>
+    <CommandBinding x:Name="SaveCommand" Command="ApplicationCommands.Save" CanExecute="SaveCommand_CanExecute" Executed="SaveCommand_Executed"></CommandBinding>
+    <CommandBinding x:Name="SaveAsCommand" Command="ApplicationCommands.SaveAs" CanExecute="SaveAsCommand_CanExecute" Executed="SaveAsCommand_Executed"></CommandBinding>
 
+    <CommandBinding x:Name="AddObjectCommand" Command="commands:AppCommands.AddObject" CanExecute="AddObjectCommand_CanExecute" Executed="AddObjectCommand_Executed"></CommandBinding>
     <CommandBinding x:Name="PerformCommand" Command="commands:AppCommands.Perform" CanExecute="PerformCommand_CanExecute" Executed="PerformCommand_Executed"></CommandBinding>
 
   </Window.CommandBindings>
-
   <Window.InputBindings>
+    <KeyBinding Command="commands:AppCommands.AddObject" CommandParameter="key" Key="A" Modifiers="Ctrl"/>
     <KeyBinding Command="commands:AppCommands.Perform" Key="E" Modifiers="Ctrl"/>
   </Window.InputBindings>
-  
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="20"/>
@@ -31,15 +33,19 @@
       <MenuItem Header="_File">
         <MenuItem x:Name="New" Header="_New" Command="ApplicationCommands.New"/>
         <MenuItem x:Name="Load" Header="_Load" Command="ApplicationCommands.Open"/>
-        <MenuItem x:Name="Exit" Header="E_xit" Command="commands:AppCommands.Exit"/>
+        <MenuItem x:Name="Save" Header="_Save" Command="ApplicationCommands.Save"/>
+        <MenuItem x:Name="SaveAs" Header="_Save As ..." Command="ApplicationCommands.SaveAs"/>
+        
       </MenuItem>
 
       <MenuItem Header="_Edit">
+        <MenuItem x:Name="AddObject" Header="_Add Object" Command="commands:AppCommands.AddObject" CommandParameter="menu" InputGestureText="Ctrl+A"/>
+        <Separator/>
         <MenuItem x:Name="Perform" Header="_Perform" Command="commands:AppCommands.Perform" IsCheckable="True" IsChecked="False" InputGestureText="Ctrl+E"/>
       </MenuItem>
-    </Menu>  
+    </Menu>
 
-    <TextBox Grid.Row="2" x:Name="log" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible"/>
-    
+    <yap:YapView Grid.Row="1" x:Name="yap"/>
+
   </Grid>
 </Window>

@@ -22,7 +22,7 @@ namespace YapView.Gui
     public override void Update()
     {
       base.Update();
-      string value = Interface.Handle.GetGuiValue(Handle);
+      string value = parent.Handle.GetGuiValue(Handle);
       if(value == "on")
       {
         blink = 2;
@@ -38,7 +38,7 @@ namespace YapView.Gui
 
       if(Interface.PerformanceMode)
       {
-        Interface.Handle.SendBang(Handle);
+        parent.Handle.SendBang(Handle);
       }
     }
 

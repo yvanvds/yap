@@ -22,7 +22,7 @@ namespace YapView.Gui
     public override void Update()
     {
       base.Update();
-      string value = Interface.Handle.GetGuiValue(Handle);
+      string value = parent.Handle.GetGuiValue(Handle);
       if (value == "on")
       {
         on = true;
@@ -35,7 +35,7 @@ namespace YapView.Gui
       base.OnMouseDown(e);
       if (!Interface.PerformanceMode) return;
 
-      Interface.Handle.SendIntData(Handle, on ? 0 : 1);
+      parent.Handle.SendIntData(Handle, on ? 0 : 1);
     }
 
     public override void DrawGui(SKCanvas canvas)

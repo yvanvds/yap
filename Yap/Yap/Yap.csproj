@@ -80,8 +80,8 @@
     <Reference Include="YSE.NET.PCL, Version=1.0.13.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\YSE.NET.PCL.1.0.22\lib\netstandard2.0\YSE.NET.PCL.dll</HintPath>
     </Reference>
-    <Reference Include="Yse.NET.Standard, Version=1.0.6677.31424, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Yse.NET.Standard.1.0.51\lib\netstandard2.0\Yse.NET.Standard.dll</HintPath>
+    <Reference Include="Yse.NET.Standard, Version=1.0.6679.23166, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Yse.NET.Standard.1.0.53\lib\netstandard2.0\Yse.NET.Standard.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -90,7 +90,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Commands.cs" />
+    <Compile Include="Global.cs" />
     <Compile Include="YapHandler.cs" />
+    <Compile Include="YapWindow.xaml.cs">
+      <DependentUpon>YapWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -103,6 +107,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="YapWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

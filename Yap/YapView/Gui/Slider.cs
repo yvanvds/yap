@@ -22,7 +22,7 @@ namespace YapView.Gui
     public override void Update()
     {
       base.Update();
-      string guiValue = Interface.Handle.GetGuiValue(Handle);
+      string guiValue = parent.Handle.GetGuiValue(Handle);
       sliderPos = Convert.ToFloat(guiValue);
     }
 
@@ -59,7 +59,7 @@ namespace YapView.Gui
       float delta = e.Delta > 0 ? 0.05f : -0.05f;
       sliderPos += delta;
 
-      Interface.Handle.SendFloatData(Handle, sliderPos);
+      parent.Handle.SendFloatData(Handle, sliderPos);
     }
 
     public override void OnMouseDown(MouseButtonEventArgs e)
@@ -70,7 +70,7 @@ namespace YapView.Gui
       float pos = parent.MousePos.X - Sizer.Rect.Left;
       pos /= Sizer.Rect.Width;
       sliderPos = pos;
-      Interface.Handle.SendFloatData(Handle, sliderPos);
+      parent.Handle.SendFloatData(Handle, sliderPos);
     }
 
     public override void OnMouseMove(MouseEventArgs e)
@@ -81,7 +81,7 @@ namespace YapView.Gui
       float pos = parent.MousePos.X - Sizer.Rect.Left;
       pos /= Sizer.Rect.Width;
       sliderPos = pos;
-      Interface.Handle.SendFloatData(Handle, sliderPos);
+      parent.Handle.SendFloatData(Handle, sliderPos);
     }
   }
 }

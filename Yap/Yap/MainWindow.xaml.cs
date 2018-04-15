@@ -24,38 +24,37 @@ namespace Yap
   /// </summary>
   public partial class MainWindow : Window
   {
-    YSE.IGlobal YseObj = new YSENET.Global();
-    YapHandler Handler;
+    //YapHandler Handler;
     DispatcherTimer UpdateYSE = new DispatcherTimer();
 
-    YSE.ISound sound;
-    YSE.IPatcher patcher;
+    //YSE.ISound sound;
+    //YSE.IPatcher patcher;
 
     String currentFileName = "";
 
     public MainWindow()
     {
       InitializeComponent();
-      YseObj.Log.Level = YSE.ERROR_LEVEL.DEBUG;
-      YseObj.Log.OnMessage += OnMessage;
+      Global.YseObj.Log.Level = YSE.ERROR_LEVEL.DEBUG;
+      Global.YseObj.Log.OnMessage += OnMessage;
 
-      YseObj.System.Init();
+      Global.YseObj.System.Init();
       UpdateYSE.Interval = new TimeSpan(0, 0, 0, 0, 50);
       UpdateYSE.Tick += new EventHandler(Update);
       UpdateYSE.Start();
 
-      sound = YseObj.CreateSound();
-      patcher = YseObj.CreatePatcher();
-      patcher.Create(1);
-      YapView.Interface.Handle = new YapHandler(patcher);
+      //sound = YseObj.CreateSound();
+      //patcher = YseObj.CreatePatcher();
+      //patcher.Create(1);
+      //YapView.Interface.Handle = new YapHandler(patcher);
 
-      sound.Create(patcher);
-      sound.Play();
+      //sound.Create(patcher);
+      //sound.Play();
       //Yse.Yse.System().AudioTest(true);
 
-      yap.Focusable = true;
-      yap.Focus();
-      yap.Init();
+      //yap.Focusable = true;
+      //yap.Focus();
+      //yap.Init();
 
       
     }
@@ -67,13 +66,13 @@ namespace Yap
 
     protected override void OnClosed(EventArgs e)
     {
-      yap.Clear();
+      //yap.Clear();
       UpdateYSE.Stop();
       Yse.Yse.System().close();
       base.OnClosed(e);
 
-      patcher.Dispose();
-      sound.Dispose();
+      //patcher.Dispose();
+      //sound.Dispose();
     }
 
     private void OnMessage(string message)
@@ -86,18 +85,6 @@ namespace Yap
       Application.Current.Shutdown();
     }
 
-    private void AddObjectCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-    {
-      string parameter = (string)e.Parameter;
-      if(parameter.Equals("key", StringComparison.CurrentCultureIgnoreCase))
-      {
-        yap.AddObject(true); // use mouse position
-      } else
-      {
-        yap.AddObject(false);
-      }
-      
-    }
 
     private void OpenCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
     {
@@ -110,40 +97,15 @@ namespace Yap
       dialog.Filter = "Yap File (*.yap)|*.yap";
       if (dialog.ShowDialog() == true)
       {
-        yap.Clear();
         string content = File.ReadAllText(dialog.FileName);
-        yap.Load(content);
-        currentFileName = dialog.FileName;
+
+        YapWindow window = new YapWindow();
+        window.Show();
+        window.LoadContent(dialog.FileName, content);
       }
     }
 
-    private void SaveCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-    {
-      e.CanExecute = currentFileName.Length > 0;
-    }
-
-    private void SaveCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-    {
-      string content = yap.Save();
-      File.WriteAllText(currentFileName, content);
-    }
-
-    private void SaveAsCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-    {
-      e.CanExecute = true;
-    }
-
-    private void SaveAsCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-    {
-      SaveFileDialog dialog = new SaveFileDialog();
-      dialog.Filter = "Yap File (*.yap)|*.yap";
-      if (dialog.ShowDialog() == true)
-      {
-        string content = yap.Save();
-        File.WriteAllText(dialog.FileName, content);
-        currentFileName = dialog.FileName;
-      } 
-    }
+    
 
     private void ExitCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
     {
@@ -155,10 +117,6 @@ namespace Yap
       Application.Current.Shutdown();
     }
 
-    private void AddObjectCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-    {
-      e.CanExecute = true;
-    }
 
     private void PerformCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
     {
@@ -167,9 +125,19 @@ namespace Yap
 
     private void PerformCommand_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-      yap.Deselect();
       YapView.Interface.PerformanceMode = !YapView.Interface.PerformanceMode;
       Perform.IsChecked = YapView.Interface.PerformanceMode;
+    }
+
+    private void NewCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = true;
+    }
+
+    private void NewCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+      YapWindow window = new YapWindow();
+      window.Show();
     }
   }
 }
