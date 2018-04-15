@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:Yap"
         xmlns:commands="clr-namespace:Yap.Commands"
         mc:Ignorable="d"
-        Title="MainWindow" Height="400" Width="600">
+        Title="Yap" Height="400" Width="600">
   <Window.CommandBindings>
     <CommandBinding x:Name="NewCommand" Command="ApplicationCommands.New" CanExecute="NewCommand_CanExecute" Executed="NewCommand_Executed"></CommandBinding>
     <CommandBinding x:Name="OpenCommand" Command="ApplicationCommands.Open" CanExecute="OpenCommand_CanExecute" Executed="OpenCommand_Executed"></CommandBinding>

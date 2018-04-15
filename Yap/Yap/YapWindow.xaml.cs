@@ -41,6 +41,8 @@ namespace Yap
 
       sound.Create(patcher);
       sound.Play();
+
+      Title = "new patcher";
     }
 
     protected override void OnClosed(EventArgs e)
@@ -90,6 +92,7 @@ namespace Yap
       yap.Clear();
       yap.Load(content);
       currentFileName = filename;
+      Title = currentFileName;
     }
 
     private void SaveCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -117,6 +120,8 @@ namespace Yap
         string content = yap.Save();
         File.WriteAllText(dialog.FileName, content);
         currentFileName = dialog.FileName;
+
+        Title = currentFileName;
       } 
     }
 
