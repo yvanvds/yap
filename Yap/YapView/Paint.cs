@@ -15,6 +15,13 @@ namespace YapView
       Color = new SKColor(60,60,80),
     };
 
+    public static SKPaint TextRect = new SKPaint()
+    {
+      Style = SKPaintStyle.Stroke,
+      Color = new SKColor(60, 60, 80),
+      StrokeWidth = 1f,
+    };
+
     public static SKPaint ObjectFillSelected = new SKPaint()
     {
       Style = SKPaintStyle.StrokeAndFill,
@@ -74,6 +81,13 @@ namespace YapView
     {
       Style = SKPaintStyle.Stroke,
       StrokeWidth = 2f,
+      Color = SKColors.RoyalBlue
+    };
+
+    public static SKPaint Selector = new SKPaint()
+    {
+      Style = SKPaintStyle.Stroke,
+      StrokeWidth = 1f,
       Color = SKColors.RoyalBlue
     };
 

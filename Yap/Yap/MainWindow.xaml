@@ -12,7 +12,8 @@
     <CommandBinding x:Name="NewCommand" Command="ApplicationCommands.New" CanExecute="NewCommand_CanExecute" Executed="NewCommand_Executed"></CommandBinding>
     <CommandBinding x:Name="OpenCommand" Command="ApplicationCommands.Open" CanExecute="OpenCommand_CanExecute" Executed="OpenCommand_Executed"></CommandBinding>
     <CommandBinding x:Name="ExitCommand" Command="commands:AppCommands.Exit" CanExecute="ExitCommand_CanExecute" Executed="ExitCommand_Executed"></CommandBinding>
-
+    <CommandBinding x:Name="HelpCommand" Command="commands:AppCommands.Help" CanExecute="HelpCommand_CanExecute" Executed="HelpCommand_Executed"></CommandBinding>
+    <CommandBinding x:Name="AboutCommand" Command="commands:AppCommands.About" CanExecute="AboutCommand_CanExecute" Executed="AboutCommand_Executed"></CommandBinding>
     <CommandBinding x:Name="PerformCommand" Command="commands:AppCommands.Perform" CanExecute="PerformCommand_CanExecute" Executed="PerformCommand_Executed"></CommandBinding>
 
   </Window.CommandBindings>
@@ -36,6 +37,11 @@
 
       <MenuItem Header="_Edit">
         <MenuItem x:Name="Perform" Header="_Perform" Command="commands:AppCommands.Perform" IsCheckable="True" IsChecked="False" InputGestureText="Ctrl+E"/>
+      </MenuItem>
+
+      <MenuItem Header="_Help" HorizontalAlignment="Right">
+        <MenuItem x:Name="Help" Header="_Help" Command="commands:AppCommands.Help"/>
+        <MenuItem x:Name="About" Header="About" Command="commands:AppCommands.About"/>
       </MenuItem>
     </Menu>  
 

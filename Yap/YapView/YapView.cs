@@ -128,6 +128,7 @@ namespace YapView
       {
         Widgets.Draw(canvas);
         Connections.Draw(canvas);
+        Selector.Draw(canvas);
       }
       
     }
@@ -177,7 +178,7 @@ namespace YapView
       }
       else
       {
-        Selector.CanvasClicked();
+        Selector.CanvasClicked(e);
       }
     }
 
@@ -200,10 +201,9 @@ namespace YapView
           }
         }
         Connections.DeleteCurrent();
-      } else
-      {
-        Selector.OnMouseLeftButtonUp(e);
       }
+
+      Selector.OnMouseLeftButtonUp(e);
       MouseIsDown = false;
       e.Handled = true;
     }

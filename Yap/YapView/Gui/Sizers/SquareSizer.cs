@@ -112,17 +112,36 @@ namespace YapView.Gui
     {
       rect.Left = value;
       rect.Size = size;
+      handle.X = rect.Right;
+      handle.Y = rect.Bottom;
     }
 
     public void SetTop(float value)
     {
       rect.Top = value;
       rect.Size = size;
+      handle.X = rect.Right;
+      handle.Y = rect.Bottom;
     }
 
     public void OnMouseUp()
     {
       resizing = false;
+    }
+
+    public void SetSize(float width, float height)
+    {
+      size.Width = width;
+      size.Height = height;
+
+      if (size.Width < MinWidth)
+      {
+        size.Width = MinWidth;
+      }
+      if (size.Height < MinHeight)
+      {
+        size.Height = MinHeight;
+      }
     }
   }
 }

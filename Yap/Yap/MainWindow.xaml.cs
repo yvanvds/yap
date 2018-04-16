@@ -42,21 +42,6 @@ namespace Yap
       UpdateYSE.Interval = new TimeSpan(0, 0, 0, 0, 50);
       UpdateYSE.Tick += new EventHandler(Update);
       UpdateYSE.Start();
-
-      //sound = YseObj.CreateSound();
-      //patcher = YseObj.CreatePatcher();
-      //patcher.Create(1);
-      //YapView.Interface.Handle = new YapHandler(patcher);
-
-      //sound.Create(patcher);
-      //sound.Play();
-      //Yse.Yse.System().AudioTest(true);
-
-      //yap.Focusable = true;
-      //yap.Focus();
-      //yap.Init();
-
-      
     }
 
     private void Update(object sender, EventArgs e)
@@ -66,13 +51,9 @@ namespace Yap
 
     protected override void OnClosed(EventArgs e)
     {
-      //yap.Clear();
       UpdateYSE.Stop();
       Yse.Yse.System().close();
       base.OnClosed(e);
-
-      //patcher.Dispose();
-      //sound.Dispose();
     }
 
     private void OnMessage(string message)
@@ -138,6 +119,28 @@ namespace Yap
     {
       YapWindow window = new YapWindow();
       window.Show();
+    }
+
+    private void HelpCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = true;
+    }
+
+    private void HelpCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+      HelpWindow window = new HelpWindow();
+      window.Show();
+    }
+
+    private void AboutCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+    {
+      e.CanExecute = true;
+    }
+
+    private void AboutCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+    {
+      AboutWindow window = new AboutWindow();
+      window.ShowDialog();
     }
   }
 }

@@ -23,6 +23,7 @@ namespace YapView.Gui
     float MinWidth { get; set; }
     float MinHeight { get; set; }
 
+    void SetSize(float width, float height);
     void SetLeft(float value);
     void SetTop(float value);
 

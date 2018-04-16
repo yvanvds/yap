@@ -32,6 +32,20 @@ namespace Yap.Commands
       "Perform",
       "Perform",
       typeof(AppCommands)
-  );
+    );
+
+    public static readonly RoutedUICommand Help = new RoutedUICommand
+    (
+      "Help",
+      "Help",
+      typeof(AppCommands)
+    );
+
+    public static readonly RoutedUICommand About = new RoutedUICommand
+    (
+      "About",
+      "About",
+      typeof(AppCommands)
+    );
   }
 }

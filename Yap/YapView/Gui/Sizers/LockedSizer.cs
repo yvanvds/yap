@@ -78,5 +78,10 @@ namespace YapView.Gui
     {
       
     }
+
+    public void SetSize(float width, float height)
+    {
+
+    }
   }
 }

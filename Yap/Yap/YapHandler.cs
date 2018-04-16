@@ -144,6 +144,7 @@ namespace Yap
         case ".t": return YapView.ObjectType.TOGGLE;
         case ".counter": return YapView.ObjectType.COUNTER;
         case ".m": return YapView.ObjectType.MESSAGE;
+        case ".text": return YapView.ObjectType.TEXT;
         default: return YapView.ObjectType.BASE;
       }
     }

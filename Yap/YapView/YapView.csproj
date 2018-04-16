@@ -86,6 +86,7 @@
     <Compile Include="Gui\Sizers\LockedSizer.cs" />
     <Compile Include="Gui\Sizers\SquareSizer.cs" />
     <Compile Include="Gui\Slider.cs" />
+    <Compile Include="Gui\Text.cs" />
     <Compile Include="Gui\Toggle.cs" />
     <Compile Include="Gui\Widget.cs" />
     <Compile Include="Interface.cs" />

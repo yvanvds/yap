@@ -10,5 +10,7 @@ namespace YapView.Gui
   {
     public static string POSX = "pos_x";
     public static string POSY = "pos_y";
+    public static string WIDTH = "width";
+    public static string HEIGHT = "height";
   }
 }

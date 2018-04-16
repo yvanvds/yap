@@ -1,0 +1,14 @@
+﻿<Window x:Class="Yap.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Yap"
+        mc:Ignorable="d"
+        Title="AboutWindow" Height="285.331" Width="359.937">
+  <Grid>
+    <Label Content="yap" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="48" FontWeight="Bold"/>
+    <TextBlock HorizontalAlignment="Left" Height="139.331" Margin="10,105,0,0" TextWrapping="Wrap" Text="Yap is created and maintained by Mute (mutecode.com) with support from Musica and C-TAKT." VerticalAlignment="Top" Width="331.937"/>
+
+  </Grid>
+</Window>

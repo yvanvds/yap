@@ -14,10 +14,8 @@
     <CommandBinding x:Name="OpenCommand" Command="ApplicationCommands.Open" CanExecute="OpenCommand_CanExecute" Executed="OpenCommand_Executed"></CommandBinding>
     <CommandBinding x:Name="SaveCommand" Command="ApplicationCommands.Save" CanExecute="SaveCommand_CanExecute" Executed="SaveCommand_Executed"></CommandBinding>
     <CommandBinding x:Name="SaveAsCommand" Command="ApplicationCommands.SaveAs" CanExecute="SaveAsCommand_CanExecute" Executed="SaveAsCommand_Executed"></CommandBinding>
-
     <CommandBinding x:Name="AddObjectCommand" Command="commands:AppCommands.AddObject" CanExecute="AddObjectCommand_CanExecute" Executed="AddObjectCommand_Executed"></CommandBinding>
     <CommandBinding x:Name="PerformCommand" Command="commands:AppCommands.Perform" CanExecute="PerformCommand_CanExecute" Executed="PerformCommand_Executed"></CommandBinding>
-
   </Window.CommandBindings>
   <Window.InputBindings>
     <KeyBinding Command="commands:AppCommands.AddObject" CommandParameter="key" Key="A" Modifiers="Ctrl"/>

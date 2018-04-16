@@ -44,6 +44,11 @@ namespace YapView.Gui
       return Sizer.Contains(pos);
     }
 
+    public bool IsInside(SKRect rect)
+    {
+      return rect.Contains(Sizer.Rect);
+    }
+
     public void EnableEditor(SKPoint pos)
     {
       Keyboard.Focus = true;
@@ -109,7 +114,7 @@ namespace YapView.Gui
     public virtual void OnMouseMove(MouseEventArgs e)
     {
       if (Interface.PerformanceMode) return;
-
+      
       SKPoint pos = new SKPoint
       {
         X = (float)e.GetPosition(parent).X - Sizer.Rect.Left,
@@ -119,6 +124,14 @@ namespace YapView.Gui
       DisableEditor();
       Sizer.Move(pos);
 
+      Connector.Update(Sizer.Rect);
+    }
+
+    public void Move(SKPoint delta)
+    {
+      if (Interface.PerformanceMode) return;
+      DisableEditor();
+      Sizer.Move(delta);
       Connector.Update(Sizer.Rect);
     }
 
@@ -169,6 +182,13 @@ namespace YapView.Gui
     {
       if (handle == null) return;
 
+      string width = parent.Handle.GetGuiProperty(handle, Properties.WIDTH);
+      string height = parent.Handle.GetGuiProperty(handle, Properties.HEIGHT);
+      if(width.Length > 0 && height.Length > 0)
+      {
+        Sizer.SetSize(Convert.ToFloat(width), Convert.ToFloat(height));
+      }
+
       string left = parent.Handle.GetGuiProperty(handle, Properties.POSX);
       if(left.Length > 0)
       {
@@ -193,6 +213,12 @@ namespace YapView.Gui
       if (handle == null) return;
       parent.Handle.SetGuiProperty(handle, Properties.POSX, Sizer.Rect.Left.ToString());
       parent.Handle.SetGuiProperty(handle, Properties.POSY, Sizer.Rect.Top.ToString());
+
+      if (Sizer.Mode == SizeMode.SQUARE || Sizer.Mode == SizeMode.FLEX)
+      {
+        parent.Handle.SetGuiProperty(handle, Properties.WIDTH, Sizer.Rect.Width.ToString());
+        parent.Handle.SetGuiProperty(handle, Properties.HEIGHT, Sizer.Rect.Height.ToString());
+      }
     }
 
     public void Release()

@@ -54,7 +54,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>AB7FC45264002DF07BE3552CBBD1D3E06F628903</ManifestCertificateThumbprint>
@@ -93,8 +93,8 @@
     <Reference Include="YSE.NET.PCL, Version=1.0.13.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\YSE.NET.PCL.1.0.22\lib\netstandard2.0\YSE.NET.PCL.dll</HintPath>
     </Reference>
-    <Reference Include="Yse.NET.Standard, Version=1.0.6679.23166, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Yse.NET.Standard.1.0.53\lib\netstandard2.0\Yse.NET.Standard.dll</HintPath>
+    <Reference Include="Yse.NET.Standard, Version=1.0.6680.41091, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Yse.NET.Standard.1.0.58\lib\netstandard2.0\Yse.NET.Standard.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -102,12 +102,26 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Commands.cs" />
     <Compile Include="Global.cs" />
+    <Compile Include="HelpWindow.xaml.cs">
+      <DependentUpon>HelpWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="YapHandler.cs" />
     <Compile Include="YapWindow.xaml.cs">
       <DependentUpon>YapWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="HelpWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

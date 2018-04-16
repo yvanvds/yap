@@ -17,5 +17,6 @@ namespace YapView
     TOGGLE,
     COUNTER,
     MESSAGE,
+    TEXT,
   }
 }

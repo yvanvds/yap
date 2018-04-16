@@ -100,11 +100,17 @@ namespace YapView
             Widget = new Gui.Message(parent, handle, Widget.Sizer.Rect.Location);
             break;
           }
+        case ObjectType.TEXT:
+          {
+            Widget = new Gui.Text(parent, handle, Widget.Sizer.Rect.Location);
+            break;
+          }
         case ObjectType.INVALID:
           {
             Widget = new Gui.InvalidObject(parent, handle, Widget.Sizer.Rect.Location);
             break;
           }
+          
         default:
           {
             Widget = new Gui.Connectable(parent, handle, Widget.Sizer.Rect.Location);
