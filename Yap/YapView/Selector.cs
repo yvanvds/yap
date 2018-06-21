@@ -130,6 +130,7 @@ namespace YapView
           }
         }
         PreviousMousePos = pos;
+        view.Changed();
       }
 
       if(MouseDownSelectActive)
@@ -179,14 +180,67 @@ namespace YapView
         {
           if(holder.Widget.Keyboard.HandleKeyDown(e))
           {
+            e.Handled = true;
             return true;
           }
         }
       }
 
-      if(e.Key == Key.Delete || e.Key == Key.Back)
+      if(e.Key == Key.Left)
+      {
+        SKPoint p = new SKPoint(-1, 0);
+        foreach (var holder in Widgets)
+        {
+          holder.Widget.Move(p);
+        }
+        e.Handled = true;
+        view.Changed();
+      }
+
+      if (e.Key == Key.Right)
+      {
+        SKPoint p = new SKPoint(1, 0);
+        foreach (var holder in Widgets)
+        {
+          holder.Widget.Move(p);
+         
+        }
+        e.Handled = true;
+        view.Changed();
+      }
+
+      if (e.Key == Key.Up)
+      {
+        SKPoint p = new SKPoint(0, -1);
+        foreach (var holder in Widgets)
+        {
+          holder.Widget.Move(p);
+          
+        }
+        e.Handled = true;
+        view.Changed();
+      }
+
+      if (e.Key == Key.Down)
+      {
+        SKPoint p = new SKPoint(0, 1);
+        foreach (var holder in Widgets)
+        {
+          holder.Widget.Move(p);
+          
+        }
+        e.Handled = true;
+        view.Changed();
+      }
+
+      // don't mix arrow keys with the rest
+      if (e.Handled) return true;
+
+      if (e.Key == Key.Delete || e.Key == Key.Back)
       {
         DeleteAll();
+        e.Handled = true;
+        view.Changed();
         return true;
       }
 
@@ -194,6 +248,7 @@ namespace YapView
       {
         CtrlDown = true;
         MultiSelect = true;
+        e.Handled = true;
         return true;
       }
 

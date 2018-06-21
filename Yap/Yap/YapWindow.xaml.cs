@@ -21,8 +21,8 @@ namespace Yap
   /// </summary>
   public partial class YapWindow : Window
   {
-    YSE.ISound sound;
-    YSE.IPatcher patcher;
+    IYse.ISound sound;
+    IYse.IPatcher patcher;
 
     String currentFileName = "";
 
@@ -30,12 +30,13 @@ namespace Yap
     {
       InitializeComponent();
 
-      sound = Global.YseObj.CreateSound();
-      patcher = Global.YseObj.CreatePatcher();
+      sound = Global.YseObj.NewSound();
+      patcher = Global.YseObj.NewPatcher();
       patcher.Create(1);
 
       yap.Handle = new YapHandler(patcher);
       yap.Focusable = true;
+      
       yap.Focus();
       yap.Init();
 
@@ -89,8 +90,9 @@ namespace Yap
 
     public void LoadContent(string filename, string content)
     {
-      yap.Clear();
-      yap.Load(content);
+      patcher.Clear();
+      patcher.ParseJSON(content);
+      yap.Load();
       currentFileName = filename;
       Title = currentFileName;
     }

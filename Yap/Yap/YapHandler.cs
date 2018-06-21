@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using YSE;
+using IYse;
 
 namespace Yap
 {
   class YapHandler : YapView.IYapHandler
   {
-    public YSE.IPatcher patcher = null;
+    public IPatcher patcher = null;
 
-    public YapHandler(YSE.IPatcher patcher)
+    public YapHandler(IPatcher patcher)
     {
       this.patcher = patcher;
     }

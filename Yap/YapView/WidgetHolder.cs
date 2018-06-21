@@ -174,6 +174,7 @@ namespace YapView
       }
 
       Widget.Update();
+      parent.Changed();
     }
   }
 }

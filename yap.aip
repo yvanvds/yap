@@ -10,12 +10,16 @@
     <ROW Property="AI_REQUIRED_DOTNET_VERSION" MultiBuildValue="DefaultBuild:4.7" ValueLocId="-"/>
     <ROW Property="ALLUSERS" Value="1" MultiBuildValue="DefaultBuild:2"/>
     <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName]." ValueLocId="*"/>
+    <ROW Property="ARPHELPLINK" Value="https://yap.mutecode.com"/>
+    <ROW Property="ARPPRODUCTICON" Value="icon.exe" Type="8"/>
+    <ROW Property="ARPURLINFOABOUT" Value="https://yap.mutecode.com"/>
+    <ROW Property="ARPURLUPDATEINFO" Value="https://yap.mutecode.com"/>
     <ROW Property="CTRLS" Value="2"/>
     <ROW Property="Manufacturer" Value="Mute"/>
     <ROW Property="ProductCode" Value="1033:{6A3CD7C6-9752-4D98-97F8-B85B0818A673} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="yap"/>
-    <ROW Property="ProductVersion" Value="1.0.0" Type="32"/>
+    <ROW Property="ProductVersion" Value="1.0.2" Type="32"/>
     <ROW Property="RUNAPPLICATION" Value="1" Type="4"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{085E3B60-478E-4652-A27F-35F6CDD65A7C}"/>
@@ -34,45 +38,77 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
+    <ROW Directory="Dsp_Dir" Directory_Parent="help_Dir" DefaultDir="3DSP~1|3 Dsp"/>
+    <ROW Directory="Flow_Dir" Directory_Parent="help_Dir" DefaultDir="2FLOW~1|2 Flow"/>
+    <ROW Directory="Gui_Dir" Directory_Parent="help_Dir" DefaultDir="0GUI~1|0 Gui"/>
+    <ROW Directory="Math_Dir" Directory_Parent="help_Dir" DefaultDir="1MATH~1|1 Math"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
+    <ROW Directory="help_Dir" Directory_Parent="APPDIR" DefaultDir="help"/>
+    <ROW Directory="x64_Dir" Directory_Parent="APPDIR" DefaultDir="x64"/>
+    <ROW Directory="x86_Dir" Directory_Parent="APPDIR" DefaultDir="x86"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
+    <ROW Component="Basic_Elements.yap" ComponentId="{E1EF881F-59D1-4442-A5AB-F9D99573B1C7}" Directory_="Gui_Dir" Attributes="0" KeyPath="Basic_Elements.yap" Type="0"/>
+    <ROW Component="Integers.yap" ComponentId="{5CFFDF40-58D7-4816-8913-F04F5050DA0F}" Directory_="Math_Dir" Attributes="0" KeyPath="Integers.yap" Type="0"/>
+    <ROW Component="Metro.yap" ComponentId="{C041A83A-3D6E-463A-AEA4-ECB02434A7C5}" Directory_="Flow_Dir" Attributes="0" KeyPath="Metro.yap" Type="0"/>
     <ROW Component="ProductInformation" ComponentId="{177A7903-54F4-42FA-A994-D61450C12525}" Directory_="APPDIR" Attributes="4" KeyPath="Version"/>
-    <ROW Component="SkiaSharp.Views.Desktop.dll" ComponentId="{EA6F1FAB-CC5B-4093-B010-7589BDAF65D1}" Directory_="APPDIR" Attributes="0" KeyPath="SkiaSharp.Views.Desktop.dll"/>
-    <ROW Component="SkiaSharp.Views.WPF.dll" ComponentId="{0C3E22B0-5FFD-40E0-8DAF-3F9F7B98556D}" Directory_="APPDIR" Attributes="0" KeyPath="SkiaSharp.Views.WPF.dll"/>
-    <ROW Component="SkiaSharp.dll" ComponentId="{AED4098A-3331-4095-9A4D-83E46AB0706E}" Directory_="APPDIR" Attributes="0" KeyPath="SkiaSharp.dll"/>
-    <ROW Component="System.Data.Common.dll" ComponentId="{EE7C812B-73B3-4854-8948-5887A12A596B}" Directory_="APPDIR" Attributes="0" KeyPath="System.Data.Common.dll"/>
-    <ROW Component="System.Diagnostics.StackTrace.dll" ComponentId="{B9BBDEBD-6F02-4E0F-9569-751F01C7D414}" Directory_="APPDIR" Attributes="0" KeyPath="System.Diagnostics.StackTrace.dll"/>
-    <ROW Component="System.Diagnostics.Tracing.dll" ComponentId="{4042014E-63CE-4D56-BFD8-B0FBB97C31C2}" Directory_="APPDIR" Attributes="0" KeyPath="System.Diagnostics.Tracing.dll"/>
-    <ROW Component="System.Globalization.Extensions.dll" ComponentId="{B11558B5-6A24-4A2A-A44F-AD3FAB691D91}" Directory_="APPDIR" Attributes="0" KeyPath="System.Globalization.Extensions.dll"/>
-    <ROW Component="System.IO.Compression.dll" ComponentId="{10D410AA-0498-4129-8EAF-63EC74ABA65B}" Directory_="APPDIR" Attributes="0" KeyPath="System.IO.Compression.dll"/>
-    <ROW Component="System.Net.Http.dll" ComponentId="{257CB51E-57D4-43D5-8878-08843C6DD715}" Directory_="APPDIR" Attributes="0" KeyPath="System.Net.Http.dll"/>
-    <ROW Component="System.Net.Sockets.dll" ComponentId="{A5F54542-F4FE-4512-AA91-11B9E4905338}" Directory_="APPDIR" Attributes="0" KeyPath="System.Net.Sockets.dll"/>
-    <ROW Component="System.Runtime.Serialization.Primitives." ComponentId="{55C9038B-775E-4EB2-85C5-ED3254B4B96E}" Directory_="APPDIR" Attributes="0" KeyPath="System.Runtime.Serialization.Primitives.dll"/>
-    <ROW Component="System.Security.Cryptography.Algorithms." ComponentId="{AA66307B-FD01-4BB8-B50B-5C0B52A88FE0}" Directory_="APPDIR" Attributes="0" KeyPath="System.Security.Cryptography.Algorithms.dll"/>
-    <ROW Component="System.Security.SecureString.dll" ComponentId="{5D8CDAFF-0B36-4DD8-BF4D-1152B85F8129}" Directory_="APPDIR" Attributes="0" KeyPath="System.Security.SecureString.dll"/>
-    <ROW Component="System.Threading.Overlapped.dll" ComponentId="{379A3E09-D48D-47E0-B153-FDFB0EC05738}" Directory_="APPDIR" Attributes="0" KeyPath="System.Threading.Overlapped.dll"/>
-    <ROW Component="System.Xml.XPath.XDocument.dll" ComponentId="{22DE3D1B-49B0-4058-AEB8-234E82021DAC}" Directory_="APPDIR" Attributes="0" KeyPath="System.Xml.XPath.XDocument.dll"/>
-    <ROW Component="YSE.NET.PCL.dll" ComponentId="{F8965270-1BD0-42DB-A532-04E8340C5B81}" Directory_="APPDIR" Attributes="0" KeyPath="YSE.NET.PCL.dll"/>
+    <ROW Component="Sine.yap" ComponentId="{8AE90566-EEEC-4D06-9577-0D9963A69687}" Directory_="Dsp_Dir" Attributes="0" KeyPath="Sine.yap" Type="0"/>
+    <ROW Component="SkiaSharp.Views.Desktop.dll" ComponentId="{DB7BBE2E-1EEA-443E-8550-E1581AC3CA12}" Directory_="APPDIR" Attributes="0" KeyPath="SkiaSharp.Views.Desktop.dll"/>
+    <ROW Component="SkiaSharp.Views.WPF.dll" ComponentId="{B38D6BDE-9542-4FBD-A62E-65CECAE86FE9}" Directory_="APPDIR" Attributes="0" KeyPath="SkiaSharp.Views.WPF.dll"/>
+    <ROW Component="SkiaSharp.dll" ComponentId="{50532FB4-C0BE-474E-B227-A534FD3B8A1F}" Directory_="APPDIR" Attributes="0" KeyPath="SkiaSharp.dll"/>
+    <ROW Component="System.Data.Common.dll" ComponentId="{EC77CD9A-9F50-4500-9EE8-499298074C45}" Directory_="APPDIR" Attributes="0" KeyPath="System.Data.Common.dll"/>
+    <ROW Component="System.Diagnostics.StackTrace.dll" ComponentId="{D01693DF-A4F5-4E59-9BCE-D18BB9D1FA52}" Directory_="APPDIR" Attributes="0" KeyPath="System.Diagnostics.StackTrace.dll"/>
+    <ROW Component="System.Diagnostics.Tracing.dll" ComponentId="{65E9E044-9CBE-40E6-8C4D-88F924E8FB1C}" Directory_="APPDIR" Attributes="0" KeyPath="System.Diagnostics.Tracing.dll"/>
+    <ROW Component="System.Globalization.Extensions.dll" ComponentId="{080A1076-2632-46F9-BFDE-EC2E8CE1EEE4}" Directory_="APPDIR" Attributes="0" KeyPath="System.Globalization.Extensions.dll"/>
+    <ROW Component="System.IO.Compression.dll" ComponentId="{CC179F63-A86E-43D4-91DC-D6352F62F787}" Directory_="APPDIR" Attributes="0" KeyPath="System.IO.Compression.dll"/>
+    <ROW Component="System.Net.Http.dll" ComponentId="{BA3C83B0-3CEC-4597-A467-50F04F436174}" Directory_="APPDIR" Attributes="0" KeyPath="System.Net.Http.dll"/>
+    <ROW Component="System.Net.Sockets.dll" ComponentId="{D6C0AB3E-9C0D-4429-A38D-3C855EDFD245}" Directory_="APPDIR" Attributes="0" KeyPath="System.Net.Sockets.dll"/>
+    <ROW Component="System.Runtime.Serialization.Primitives." ComponentId="{72A0CD0D-6801-45F4-9C1F-CFB2C077F45D}" Directory_="APPDIR" Attributes="0" KeyPath="System.Runtime.Serialization.Primitives.dll"/>
+    <ROW Component="System.Security.Cryptography.Algorithms." ComponentId="{72EAD83F-0E1D-4261-9769-9EA8F09C9858}" Directory_="APPDIR" Attributes="0" KeyPath="System.Security.Cryptography.Algorithms.dll"/>
+    <ROW Component="System.Security.SecureString.dll" ComponentId="{1FC2F39D-F747-4013-AE60-FB6F2B4E3E11}" Directory_="APPDIR" Attributes="0" KeyPath="System.Security.SecureString.dll"/>
+    <ROW Component="System.Threading.Overlapped.dll" ComponentId="{B0079773-BD1B-4BF9-8D68-5CCAA4D26FA3}" Directory_="APPDIR" Attributes="0" KeyPath="System.Threading.Overlapped.dll"/>
+    <ROW Component="System.Xml.XPath.XDocument.dll" ComponentId="{CBF9CDAB-FA7A-4D1C-8F20-7568D7ABB89D}" Directory_="APPDIR" Attributes="0" KeyPath="System.Xml.XPath.XDocument.dll"/>
+    <ROW Component="YSE.NET.PCL.dll" ComponentId="{395E60EA-6C27-400F-B30D-0969334966D6}" Directory_="APPDIR" Attributes="0" KeyPath="YSE.NET.PCL.dll"/>
     <ROW Component="Yap.exe" ComponentId="{1273F776-9CE4-4E69-B07B-4FC60979E2AD}" Directory_="APPDIR" Attributes="0" KeyPath="Yap.exe"/>
-    <ROW Component="YapView.dll" ComponentId="{1A2D6753-7EBF-4056-84AD-D3532E2FAF74}" Directory_="APPDIR" Attributes="0" KeyPath="YapView.dll"/>
-    <ROW Component="Yse.NET.Standard.dll" ComponentId="{6BC32A3B-556F-49D4-A2B4-BA970E380143}" Directory_="APPDIR" Attributes="0" KeyPath="Yse.NET.Standard.dll"/>
-    <ROW Component="Yse.dll" ComponentId="{224B26FB-B8E1-4AC3-9F10-CF466FC7C587}" Directory_="APPDIR" Attributes="0" KeyPath="Yse.dll"/>
-    <ROW Component="libSkiaSharp.dll" ComponentId="{C69A1559-887E-4E4F-A418-B918ECD74127}" Directory_="APPDIR" Attributes="0" KeyPath="libSkiaSharp.dll"/>
-    <ROW Component="libSkiaSharp.dylib" ComponentId="{79B91BFF-48CA-48CC-AA67-0AAD2FD884A2}" Directory_="APPDIR" Attributes="0" KeyPath="libSkiaSharp.dylib" Type="0"/>
-    <ROW Component="libsndfile1.dll" ComponentId="{BF8E3228-BFA6-4BB5-90D2-612C9496CFB0}" Directory_="APPDIR" Attributes="0" KeyPath="libsndfile1.dll"/>
-    <ROW Component="portaudio_x86.dll" ComponentId="{8DDABB1A-7679-4376-9950-16ABB6AE1131}" Directory_="APPDIR" Attributes="0" KeyPath="portaudio_x86.dll"/>
+    <ROW Component="YapView.dll" ComponentId="{463FF43F-FCD9-4809-8D0F-EF367901F6AD}" Directory_="APPDIR" Attributes="0" KeyPath="YapView.dll"/>
+    <ROW Component="Yse.NET.Standard.dll" ComponentId="{E6B71774-8D65-42A2-A7C0-371BBA51C0F0}" Directory_="APPDIR" Attributes="0" KeyPath="Yse.NET.Standard.dll"/>
+    <ROW Component="Yse.dll" ComponentId="{4638975A-E031-4127-9852-25E98C07F93D}" Directory_="APPDIR" Attributes="0" KeyPath="Yse.dll"/>
+    <ROW Component="libSkiaSharp.dll" ComponentId="{D6944901-BE7C-408E-893A-41C51FD9CBF8}" Directory_="APPDIR" Attributes="0" KeyPath="libSkiaSharp.dll"/>
+    <ROW Component="libSkiaSharp.dll_1" ComponentId="{44218590-00EC-42BA-9F6A-8EDDA0CAF6C0}" Directory_="x64_Dir" Attributes="256" KeyPath="libSkiaSharp.dll_1"/>
+    <ROW Component="libSkiaSharp.dll_2" ComponentId="{85D10C90-520E-456E-BD79-C3674D0E706B}" Directory_="x86_Dir" Attributes="0" KeyPath="libSkiaSharp.dll_2"/>
+    <ROW Component="libSkiaSharp.dylib" ComponentId="{79FCDC3B-85D8-42DA-93A8-D1666F3DDC4F}" Directory_="APPDIR" Attributes="0" KeyPath="libSkiaSharp.dylib" Type="0"/>
+    <ROW Component="libsndfile1.dll" ComponentId="{41109F02-A2CD-422B-B656-E8C09E622537}" Directory_="APPDIR" Attributes="0" KeyPath="libsndfile1.dll"/>
+    <ROW Component="portaudio_x86.dll" ComponentId="{447C9806-F2A4-42B8-8817-955CEEAFBCD0}" Directory_="APPDIR" Attributes="0" KeyPath="portaudio_x86.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="ProductInformation SkiaSharp.Views.Desktop.dll SkiaSharp.Views.WPF.dll SkiaSharp.dll System.Data.Common.dll System.Diagnostics.StackTrace.dll System.Diagnostics.Tracing.dll System.Globalization.Extensions.dll System.IO.Compression.dll System.Net.Http.dll System.Net.Sockets.dll System.Runtime.Serialization.Primitives. System.Security.Cryptography.Algorithms. System.Security.SecureString.dll System.Threading.Overlapped.dll System.Xml.XPath.XDocument.dll YSE.NET.PCL.dll Yap.exe YapView.dll Yse.NET.Standard.dll Yse.dll libSkiaSharp.dll libSkiaSharp.dylib libsndfile1.dll portaudio_x86.dll"/>
+    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="Basic_Elements.yap Integers.yap Metro.yap ProductInformation Sine.yap SkiaSharp.Views.Desktop.dll SkiaSharp.Views.WPF.dll SkiaSharp.dll System.Data.Common.dll System.Diagnostics.StackTrace.dll System.Diagnostics.Tracing.dll System.Globalization.Extensions.dll System.IO.Compression.dll System.Net.Http.dll System.Net.Sockets.dll System.Runtime.Serialization.Primitives. System.Security.Cryptography.Algorithms. System.Security.SecureString.dll System.Threading.Overlapped.dll System.Xml.XPath.XDocument.dll YSE.NET.PCL.dll Yap.exe YapView.dll Yse.NET.Standard.dll Yse.dll libSkiaSharp.dll libSkiaSharp.dll_1 libSkiaSharp.dll_2 libSkiaSharp.dylib libsndfile1.dll portaudio_x86.dll"/>
     <ATTRIBUTE name="CurrentFeature" value="MainFeature"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
+    <ROW File="Bandpass.yap" Component_="Sine.yap" FileName="05BAND~1.YAP|05 Bandpass.yap" Attributes="0" SourcePath="help\3 Dsp\05 Bandpass.yap" SelfReg="false" NextFile="Line.yap"/>
+    <ROW File="Basic_Elements.yap" Component_="Basic_Elements.yap" FileName="00BASI~1.YAP|00 Basic_Elements.yap" Attributes="0" SourcePath="help\0 Gui\00 Basic_Elements.yap" SelfReg="false" NextFile="Slider.yap"/>
+    <ROW File="Counter.yap" Component_="Metro.yap" FileName="05COUN~1.YAP|05 Counter.yap" Attributes="0" SourcePath="help\2 Flow\05 Counter.yap" SelfReg="false" NextFile="Sine.yap"/>
+    <ROW File="Floats.yap" Component_="Integers.yap" FileName="01FLOA~1.YAP|01 Floats.yap" Attributes="0" SourcePath="help\1 Math\01 Floats.yap" SelfReg="false" NextFile="Random.yap"/>
+    <ROW File="Gate.yap" Component_="Metro.yap" FileName="01GATE~1.YAP|01 Gate.yap" Attributes="0" SourcePath="help\2 Flow\01 Gate.yap" SelfReg="false" NextFile="Switch.yap"/>
+    <ROW File="Highpass.yap" Component_="Sine.yap" FileName="03HIGH~1.YAP|03 Highpass.yap" Attributes="0" SourcePath="help\3 Dsp\03 Highpass.yap" SelfReg="false" NextFile="Lowpass.yap"/>
+    <ROW File="Integers.yap" Component_="Integers.yap" FileName="00INTE~1.YAP|00 Integers.yap" Attributes="0" SourcePath="help\1 Math\00 Integers.yap" SelfReg="false" NextFile="Floats.yap"/>
+    <ROW File="Line.yap" Component_="Sine.yap" FileName="05LINE~1.YAP|05 Line.yap" Attributes="0" SourcePath="help\3 Dsp\05 Line.yap" SelfReg="false" NextFile="libSkiaSharp.dll"/>
+    <ROW File="Lowpass.yap" Component_="Sine.yap" FileName="04LOWP~1.YAP|04 Lowpass.yap" Attributes="0" SourcePath="help\3 Dsp\04 Lowpass.yap" SelfReg="false" NextFile="Bandpass.yap"/>
+    <ROW File="Metro.yap" Component_="Metro.yap" FileName="00METR~1.YAP|00 Metro.yap" Attributes="0" SourcePath="help\2 Flow\00 Metro.yap" SelfReg="false" NextFile="Gate.yap"/>
+    <ROW File="MidiToFrequency.yap" Component_="Integers.yap" FileName="03MIDI~1.YAP|03 MidiToFrequency.yap" Attributes="0" SourcePath="help\1 Math\03 MidiToFrequency.yap" SelfReg="false" NextFile="Metro.yap"/>
+    <ROW File="Noise.yap" Component_="Sine.yap" FileName="02NOIS~1.YAP|02 Noise.yap" Attributes="0" SourcePath="help\3 Dsp\02 Noise.yap" SelfReg="false" NextFile="Highpass.yap"/>
+    <ROW File="Random.yap" Component_="Integers.yap" FileName="02RAND~1.YAP|02 Random.yap" Attributes="0" SourcePath="help\1 Math\02 Random.yap" SelfReg="false" NextFile="MidiToFrequency.yap"/>
+    <ROW File="Route.yap" Component_="Metro.yap" FileName="03ROUT~1.YAP|03 Route.yap" Attributes="0" SourcePath="help\2 Flow\03 Route.yap" SelfReg="false" NextFile="SendRecieve.yap"/>
+    <ROW File="Saw.yap" Component_="Sine.yap" FileName="01SAW~1.YAP|01 Saw.yap" Attributes="0" SourcePath="help\3 Dsp\01 Saw.yap" SelfReg="false" NextFile="Noise.yap"/>
+    <ROW File="SendRecieve.yap" Component_="Metro.yap" FileName="04SEND~1.YAP|04 Send Recieve.yap" Attributes="0" SourcePath="help\2 Flow\04 Send Recieve.yap" SelfReg="false" NextFile="Counter.yap"/>
+    <ROW File="Sine.yap" Component_="Sine.yap" FileName="00SINE~1.YAP|00 Sine.yap" Attributes="0" SourcePath="help\3 Dsp\00 Sine.yap" SelfReg="false" NextFile="Saw.yap"/>
     <ROW File="SkiaSharp.Views.Desktop.dll" Component_="SkiaSharp.Views.Desktop.dll" FileName="SKIASH~2.DLL|SkiaSharp.Views.Desktop.dll" Attributes="0" SourcePath="publish\SkiaSharp.Views.Desktop.dll" SelfReg="false" NextFile="SkiaSharp.Views.WPF.dll"/>
     <ROW File="SkiaSharp.Views.WPF.dll" Component_="SkiaSharp.Views.WPF.dll" FileName="SKIASH~3.DLL|SkiaSharp.Views.WPF.dll" Attributes="0" SourcePath="publish\SkiaSharp.Views.WPF.dll" SelfReg="false" NextFile="SkiaSharp.xml"/>
     <ROW File="SkiaSharp.dll" Component_="SkiaSharp.dll" FileName="SKIASH~1.DLL|SkiaSharp.dll" Attributes="0" SourcePath="publish\SkiaSharp.dll" SelfReg="false" NextFile="SkiaSharp.dll.config"/>
     <ROW File="SkiaSharp.dll.config" Component_="libSkiaSharp.dylib" FileName="SKIASH~1.CON|SkiaSharp.dll.config" Attributes="0" SourcePath="publish\SkiaSharp.dll.config" SelfReg="false" NextFile="SkiaSharp.Views.Desktop.dll"/>
     <ROW File="SkiaSharp.xml" Component_="libSkiaSharp.dylib" FileName="SKIASH~1.XML|SkiaSharp.xml" Attributes="0" SourcePath="publish\SkiaSharp.xml" SelfReg="false" NextFile="System.Data.Common.dll"/>
+    <ROW File="Slider.yap" Component_="Basic_Elements.yap" FileName="01SLID~1.YAP|01 Slider.yap" Attributes="0" SourcePath="help\0 Gui\01 Slider.yap" SelfReg="false" NextFile="Integers.yap"/>
+    <ROW File="Switch.yap" Component_="Metro.yap" FileName="02SWIT~1.YAP|02 Switch.yap" Attributes="0" SourcePath="help\2 Flow\02 Switch.yap" SelfReg="false" NextFile="Route.yap"/>
     <ROW File="System.Data.Common.dll" Component_="System.Data.Common.dll" FileName="SYSTEM~1.DLL|System.Data.Common.dll" Attributes="0" SourcePath="publish\System.Data.Common.dll" SelfReg="false" NextFile="System.Diagnostics.StackTrace.dll"/>
     <ROW File="System.Diagnostics.StackTrace.dll" Component_="System.Diagnostics.StackTrace.dll" FileName="SYSTEM~2.DLL|System.Diagnostics.StackTrace.dll" Attributes="0" SourcePath="publish\System.Diagnostics.StackTrace.dll" SelfReg="false" NextFile="System.Diagnostics.Tracing.dll"/>
     <ROW File="System.Diagnostics.Tracing.dll" Component_="System.Diagnostics.Tracing.dll" FileName="SYSTEM~3.DLL|System.Diagnostics.Tracing.dll" Attributes="0" SourcePath="publish\System.Diagnostics.Tracing.dll" SelfReg="false" NextFile="System.Globalization.Extensions.dll"/>
@@ -86,16 +122,19 @@
     <ROW File="System.Threading.Overlapped.dll" Component_="System.Threading.Overlapped.dll" FileName="SYSTE~11.DLL|System.Threading.Overlapped.dll" Attributes="0" SourcePath="publish\System.Threading.Overlapped.dll" SelfReg="false" NextFile="System.Xml.XPath.XDocument.dll"/>
     <ROW File="System.Xml.XPath.XDocument.dll" Component_="System.Xml.XPath.XDocument.dll" FileName="SYSTE~12.DLL|System.Xml.XPath.XDocument.dll" Attributes="0" SourcePath="publish\System.Xml.XPath.XDocument.dll" SelfReg="false" NextFile="Yap.application"/>
     <ROW File="YSE.NET.PCL.dll" Component_="YSE.NET.PCL.dll" FileName="YSENET~1.DLL|YSE.NET.PCL.dll" Attributes="0" SourcePath="publish\YSE.NET.PCL.dll" SelfReg="false" NextFile="Yse.NET.Standard.dll"/>
-    <ROW File="Yap.application" Component_="libSkiaSharp.dylib" FileName="YAP~1.APP|Yap.application" Attributes="0" SourcePath="publish\Yap.application" SelfReg="false" NextFile="Yap.exe"/>
-    <ROW File="Yap.exe" Component_="Yap.exe" FileName="Yap.exe" Attributes="0" SourcePath="publish\Yap.exe" SelfReg="false" NextFile="Yap.exe.config" DigSign="true"/>
+    <ROW File="YSElog.txt" Component_="libSkiaSharp.dylib" FileName="YSElog.txt" Attributes="0" SourcePath="publish\YSElog.txt" SelfReg="false" NextFile="libSkiaSharp.dll_1"/>
+    <ROW File="Yap.application" Component_="libSkiaSharp.dylib" FileName="YAP~1.APP|Yap.application" Attributes="0" SourcePath="publish\Yap.application" SelfReg="false" NextFile="Yap.exe.config"/>
+    <ROW File="Yap.exe" Component_="Yap.exe" FileName="Yap.exe" Attributes="0" SourcePath="publish\Yap.exe" SelfReg="false" NextFile="Basic_Elements.yap" DigSign="true"/>
     <ROW File="Yap.exe.config" Component_="libSkiaSharp.dylib" FileName="YAPEXE~1.CON|Yap.exe.config" Attributes="0" SourcePath="publish\Yap.exe.config" SelfReg="false" NextFile="Yap.exe.manifest"/>
     <ROW File="Yap.exe.manifest" Component_="libSkiaSharp.dylib" FileName="YAPEXE~1.MAN|Yap.exe.manifest" Attributes="0" SourcePath="publish\Yap.exe.manifest" SelfReg="false" NextFile="Yap.pdb"/>
     <ROW File="Yap.pdb" Component_="Yap.exe" FileName="Yap.pdb" Attributes="0" SourcePath="publish\Yap.pdb" SelfReg="false" NextFile="YapView.dll"/>
     <ROW File="YapView.dll" Component_="YapView.dll" FileName="YapView.dll" Attributes="0" SourcePath="publish\YapView.dll" SelfReg="false" NextFile="YapView.pdb"/>
     <ROW File="YapView.pdb" Component_="YapView.dll" FileName="YapView.pdb" Attributes="0" SourcePath="publish\YapView.pdb" SelfReg="false" NextFile="Yse.dll"/>
-    <ROW File="Yse.NET.Standard.dll" Component_="Yse.NET.Standard.dll" FileName="YSENET~2.DLL|Yse.NET.Standard.dll" Attributes="0" SourcePath="publish\Yse.NET.Standard.dll" SelfReg="false"/>
+    <ROW File="Yse.NET.Standard.dll" Component_="Yse.NET.Standard.dll" FileName="YSENET~2.DLL|Yse.NET.Standard.dll" Attributes="0" SourcePath="publish\Yse.NET.Standard.dll" SelfReg="false" NextFile="YSElog.txt"/>
     <ROW File="Yse.dll" Component_="Yse.dll" FileName="Yse.dll" Attributes="0" SourcePath="publish\Yse.dll" SelfReg="false" NextFile="YSE.NET.PCL.dll"/>
     <ROW File="libSkiaSharp.dll" Component_="libSkiaSharp.dll" FileName="LIBSKI~1.DLL|libSkiaSharp.dll" Attributes="0" SourcePath="publish\libSkiaSharp.dll" SelfReg="false" NextFile="libSkiaSharp.dylib"/>
+    <ROW File="libSkiaSharp.dll_1" Component_="libSkiaSharp.dll_1" FileName="LIBSKI~1.DLL|libSkiaSharp.dll" Attributes="0" SourcePath="publish\x64\libSkiaSharp.dll" SelfReg="false" NextFile="libSkiaSharp.dll_2"/>
+    <ROW File="libSkiaSharp.dll_2" Component_="libSkiaSharp.dll_2" FileName="LIBSKI~1.DLL|libSkiaSharp.dll" Attributes="0" SourcePath="publish\x86\libSkiaSharp.dll" SelfReg="false"/>
     <ROW File="libSkiaSharp.dylib" Component_="libSkiaSharp.dylib" FileName="LIBSKI~1.DYL|libSkiaSharp.dylib" Attributes="0" SourcePath="publish\libSkiaSharp.dylib" SelfReg="false" NextFile="libsndfile1.dll"/>
     <ROW File="libsndfile1.dll" Component_="libsndfile1.dll" FileName="LIBSND~1.DLL|libsndfile-1.dll" Attributes="0" SourcePath="publish\libsndfile-1.dll" SelfReg="false" NextFile="portaudio_x86.dll"/>
     <ROW File="portaudio_x86.dll" Component_="portaudio_x86.dll" FileName="PORTAU~1.DLL|portaudio_x86.dll" Attributes="0" SourcePath="publish\portaudio_x86.dll" SelfReg="false" NextFile="SkiaSharp.dll"/>
@@ -168,6 +207,9 @@
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[AI_UserProgramFiles][Manufacturer]\[ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
+    <ROW Name="icon.exe" SourcePath="icon.ico" Index="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
     <ROW Action="AI_DOWNGRADE" Condition="AI_NEWERPRODUCTFOUND AND (UILevel &lt;&gt; 5)" Sequence="210"/>

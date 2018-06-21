@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>1.0.8</version>
+    <title>$title$</title>
+    <authors>yvan vander sanden</authors>
+    <owners>Mute</owners>
+    <licenseUrl>https://github.com/yvanvds/yap/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://yap.mutecode.com/</projectUrl>
+    <iconUrl>https://yap.mutecode.com/images/icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A Patcher Interface, useable for audio patchers, shader programming and more.</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>Patcher Interface</tags>
+  </metadata>
+</package>

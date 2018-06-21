@@ -11,7 +11,11 @@ Yap is written by yvan vander sanden for [Mute](http://mutecode.com). With suppo
 ## More about Why
 Yap does not aim to be as good as Pure Data or Max/MSP. Instead, it was created specifically to address a few gaps in my current workflow.
 
-* I am working on a sound engine _(YSE)_, with DSP capabilities. Although the engine provides a lot of classes for DSP development, this was not enough. Written in C++, the engine is very capable of fast DSP processing. But recompiling the code is needed for every change. When prototyping, this is not efficient. I ended up adding a patcher system to YSE, but it needed an interface and this is the result.
+* While Pure Data is certainly a beautiful piece of software, the coding style is very "old school". YSE (the sound engine) is written in modern C++ and tries to be as transparent as possible. Yap (The gui part) is written as a WPF application in C#. Application development is a lot easier this way.
+
+* Right now, the patcher functionality does not offer anything that does not exist in Pure Data. But I intend to go in quite the other direction, implementing much more compositional objects. I have to start with something though, and the basic objects are bound to be the same in any visual DSP environment. 
+
+* I am also working on a sound engine _(YSE)_, with DSP capabilities. Although the engine provides a lot of classes for DSP development, this was not enough. Written in C++, the engine is very capable of fast DSP processing. But recompiling the code is needed for every change. When prototyping, this is not efficient. I ended up adding a patcher system to YSE, but it needed an interface and this is the result.
 
 * YSE also has a C# wrapper. But writing DSP code in a managed environment is a no-go. Again, a patcher system was the obvious answer for that.
 

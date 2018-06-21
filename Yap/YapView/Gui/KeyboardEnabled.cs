@@ -56,6 +56,7 @@ namespace YapView.Gui
       {
         this.text = Editor.Update(e.Key);
         CarretPos = Editor.Pos;
+        e.Handled = true;
         return true;
       }
       return false;

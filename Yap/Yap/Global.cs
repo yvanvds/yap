@@ -9,6 +9,6 @@ namespace Yap
 {
   public static class Global
   {
-    public static YSE.IGlobal YseObj = new YSENET.Global();
+    public static YseInterface YseObj;
   }
 }

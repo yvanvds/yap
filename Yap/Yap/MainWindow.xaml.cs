@@ -35,8 +35,8 @@ namespace Yap
     public MainWindow()
     {
       InitializeComponent();
-      Global.YseObj.Log.Level = YSE.ERROR_LEVEL.DEBUG;
-      Global.YseObj.Log.OnMessage += OnMessage;
+      Global.YseObj = new YSE.YseInterface(OnMessage);
+      Global.YseObj.Log.Level = IYse.ERROR_LEVEL.DEBUG;
 
       Global.YseObj.System.Init();
       UpdateYSE.Interval = new TimeSpan(0, 0, 0, 0, 50);

@@ -97,6 +97,7 @@ namespace YapView
       BelowMouse = null;
       Current = null;
       List.Clear();
+      View.Changed();
     }
 
     public void TrySetCurrentEnd(WidgetHolder obj, SKPoint pos)
@@ -116,6 +117,7 @@ namespace YapView
         Current.SetEnd(obj, (uint)pin);
         Current = null;
       }
+      View.Changed();
     }
 
     public void RemoveConnectedTo(WidgetHolder obj)
@@ -126,6 +128,7 @@ namespace YapView
         {
           List[i].Disconnect();
           List.RemoveAt(i);
+          View.Changed();
         }
       }
     }

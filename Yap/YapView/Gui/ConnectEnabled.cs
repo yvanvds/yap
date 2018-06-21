@@ -93,7 +93,8 @@ namespace YapView.Gui
     {
       for (int i = 0; i < input.Count; i++)
       {
-        if (input[i].Contains(pos)) return i;
+        SKRect rect = new SKRect(input[i].Left - 3, input[i].Top - 3, input[i].Right + 3, input[i].Bottom + 3);
+        if (rect.Contains(pos)) return i;
       }
       return -1;
     }

@@ -20,8 +20,8 @@ namespace Yap
   /// </summary>
   public partial class HelpWindow : Window
   {
-    YSE.ISound sound;
-    YSE.IPatcher patcher;
+    IYse.ISound sound;
+    IYse.IPatcher patcher;
 
     String currentFileName = "";
     private object dummyNode = null;
@@ -30,8 +30,8 @@ namespace Yap
     {
       InitializeComponent();
 
-      sound = Global.YseObj.CreateSound();
-      patcher = Global.YseObj.CreatePatcher();
+      sound = Global.YseObj.NewSound();
+      patcher = Global.YseObj.NewPatcher();
       patcher.Create(1);
 
       yap.Handle = new YapHandler(patcher);
@@ -83,7 +83,10 @@ namespace Yap
           foreach (string s in Directory.GetFiles(item.Tag.ToString()))
           {
             TreeViewItem subitem = new TreeViewItem();
-            subitem.Header = s.Substring(s.LastIndexOf("\\") + 1);
+            string header = s.Substring(s.LastIndexOf("\\") + 1);
+            header = header.Remove(header.LastIndexOf('.'));
+            header = header.Replace('_', ' ');
+            subitem.Header = header;
             subitem.Tag = s;
             subitem.FontWeight = FontWeights.Normal;
             subitem.MouseDoubleClick += new MouseButtonEventHandler(openFile);
@@ -116,7 +119,9 @@ namespace Yap
     public void LoadContent(string filename, string content)
     {
       yap.Clear();
-      yap.Load(content);
+      patcher.Clear();
+      patcher.ParseJSON(content);
+      yap.Load();
       currentFileName = filename;
       YapView.Interface.PerformanceMode = true;
     }

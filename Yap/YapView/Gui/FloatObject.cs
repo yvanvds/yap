@@ -53,5 +53,15 @@ namespace YapView.Gui
       value += (delta * multiplier);
       parent.Handle.SendFloatData(Handle, value);
     }
+
+    public override void OnMouseDown(MouseButtonEventArgs e)
+    {
+      base.OnMouseDown(e);
+
+      if (Interface.PerformanceMode)
+      {
+        parent.Handle.SendBang(Handle);
+      }
+    }
   }
 }

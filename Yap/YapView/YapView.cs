@@ -45,6 +45,7 @@ namespace YapView
     static YapView()
     {
       DefaultStyleKeyProperty.OverrideMetadata(typeof(YapView), new FrameworkPropertyMetadata(typeof(YapView)));
+
     }
     
     public void Init()
@@ -52,18 +53,18 @@ namespace YapView
       Widgets = new Widgets(this);
       Connections = new Connections(this);
       Selector = new Selector(this);
+      base.IgnorePixelScaling = true;
 
       UpdateCanvas.Interval = new TimeSpan(0, 0, 0, 0, 50);
       UpdateCanvas.Tick += new EventHandler(UpdateCanvas_Elapsed);
       UpdateCanvas.Start();
     }
 
-    public void Load(string JSONContent)
+    public void Load()
     {
-      Connections.Clear();
-      Widgets.Clear();
-      Handle.Clear();
-      Handle.Load(JSONContent);
+      Clear();
+      //Handle.Clear();
+      //Handle.Load(JSONContent);
 
       uint num = Handle.NumObjects();
 
@@ -103,12 +104,20 @@ namespace YapView
       return Handle.Save();
     }
 
+    public event EventHandler OnChange;
+    internal void Changed()
+    {
+      OnChange?.Invoke(this, new EventArgs());
+    }
+    
+
     /*
         DRAW
     */
 
     private void UpdateCanvas_Elapsed(object sender, EventArgs e)
     {
+      if (Widgets == null || Connections == null) return;
       Widgets.Update();
       InvalidateVisual();
     }
@@ -120,7 +129,9 @@ namespace YapView
 
       canvas.Clear(SKColors.DimGray);
 
-      if(Interface.PerformanceMode)
+      if (Widgets == null || Connections == null) return;
+
+      if (Interface.PerformanceMode)
       {
         Connections.Draw(canvas);
         Widgets.Draw(canvas);
@@ -130,7 +141,7 @@ namespace YapView
         Connections.Draw(canvas);
         Selector.Draw(canvas);
       }
-      
+
     }
 
     private bool TryStartConnection(SKPoint pos)
@@ -157,6 +168,8 @@ namespace YapView
     */
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
     {
+      if (Widgets == null || Connections == null) return;
+
       MouseIsDown = true;
       e.Handled = true;
 
@@ -165,6 +178,7 @@ namespace YapView
         int outlet = WidgetBelowMouse.Widget.Connector.OnOutput(mousePos);
         if (!Interface.PerformanceMode && outlet > -1)
         {
+          Deselect();
           Connections.Add(WidgetBelowMouse, (uint)outlet, mousePos);
         } else
         {
@@ -184,6 +198,8 @@ namespace YapView
 
     protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
     {
+      if (Widgets == null || Connections == null) return;
+
       if (Connections.IsBeingCreated())
       {
         SKPoint pos = new SKPoint
@@ -197,6 +213,7 @@ namespace YapView
           if (holder.Widget.Contains(pos))
           {
             Connections.TrySetCurrentEnd(holder, pos);
+            Changed();
             break;
           }
         }
@@ -212,9 +229,10 @@ namespace YapView
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
+      if (Widgets == null || Connections == null) return;
+
       mousePos.X = (float)e.GetPosition(this).X;
       mousePos.Y = (float)e.GetPosition(this).Y;
-      
 
       if (WidgetBelowMouse != null) WidgetBelowMouse.Widget.BelowMouse = false;
       WidgetBelowMouse = Widgets.At(MousePos);
@@ -233,7 +251,9 @@ namespace YapView
 
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
-      if(WidgetBelowMouse != null)
+      if (Widgets == null || Connections == null) return;
+
+      if (WidgetBelowMouse != null)
       {
         WidgetBelowMouse.Widget.OnMouseWheel(e);
       }
@@ -241,11 +261,56 @@ namespace YapView
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
+      if (Widgets == null || Connections == null) return;
+
       Selector.OnKeyDown(e);
+      if (e.Handled) return;
+
+      if (!Interface.PerformanceMode)
+      {
+        switch (e.Key)
+        {
+          case Key.B:
+            {
+              AddObject(true);
+              Widgets.List.Last().Widget.Name = ".b";
+              Widgets.List.Last().Widget.NeedsEvaluation = true;
+              Widgets.List.Last().Widget.DisableEditor();
+              break;
+            }
+          case Key.T:
+            {
+              AddObject(true);
+              Widgets.List.Last().Widget.Name = ".t";
+              Widgets.List.Last().Widget.NeedsEvaluation = true;
+              Widgets.List.Last().Widget.DisableEditor();
+              break;
+            }
+          case Key.I:
+            {
+              AddObject(true);
+              Widgets.List.Last().Widget.Name = ".i";
+              Widgets.List.Last().Widget.NeedsEvaluation = true;
+              Widgets.List.Last().Widget.DisableEditor();
+              break;
+            }
+          case Key.F:
+            {
+              AddObject(true);
+              Widgets.List.Last().Widget.Name = ".f";
+              Widgets.List.Last().Widget.NeedsEvaluation = true;
+              Widgets.List.Last().Widget.DisableEditor();
+              break;
+            }
+        }
+      }
+
     }
 
     protected override void OnKeyUp(KeyEventArgs e)
     {
+      if (Widgets == null || Connections == null) return;
+
       Selector.OnKeyUp(e);
     }
 

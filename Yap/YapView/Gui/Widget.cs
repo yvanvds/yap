@@ -1,6 +1,7 @@
 ﻿using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -211,13 +212,13 @@ namespace YapView.Gui
     public virtual void Save()
     {
       if (handle == null) return;
-      parent.Handle.SetGuiProperty(handle, Properties.POSX, Sizer.Rect.Left.ToString());
-      parent.Handle.SetGuiProperty(handle, Properties.POSY, Sizer.Rect.Top.ToString());
+      parent.Handle.SetGuiProperty(handle, Properties.POSX, Sizer.Rect.Left.ToString(CultureInfo.InvariantCulture));
+      parent.Handle.SetGuiProperty(handle, Properties.POSY, Sizer.Rect.Top.ToString(CultureInfo.InvariantCulture));
 
       if (Sizer.Mode == SizeMode.SQUARE || Sizer.Mode == SizeMode.FLEX)
       {
-        parent.Handle.SetGuiProperty(handle, Properties.WIDTH, Sizer.Rect.Width.ToString());
-        parent.Handle.SetGuiProperty(handle, Properties.HEIGHT, Sizer.Rect.Height.ToString());
+        parent.Handle.SetGuiProperty(handle, Properties.WIDTH, Sizer.Rect.Width.ToString(CultureInfo.InvariantCulture));
+        parent.Handle.SetGuiProperty(handle, Properties.HEIGHT, Sizer.Rect.Height.ToString(CultureInfo.InvariantCulture));
       }
     }
 
