@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yap", "Yap\Yap.csproj", "{E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YapView", "YapView\YapView.csproj", "{781FE037-22A0-46AE-8CDB-AD409A334451}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YapView.Standard", "YapView.Standard\YapView.Standard.csproj", "{100E71C7-9AA2-44E6-B0D7-037642F67404}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{781FE037-22A0-46AE-8CDB-AD409A334451}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{781FE037-22A0-46AE-8CDB-AD409A334451}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{781FE037-22A0-46AE-8CDB-AD409A334451}.Release|Any CPU.Build.0 = Release|Any CPU
+		{100E71C7-9AA2-44E6-B0D7-037642F67404}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{100E71C7-9AA2-44E6-B0D7-037642F67404}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{100E71C7-9AA2-44E6-B0D7-037642F67404}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{100E71C7-9AA2-44E6-B0D7-037642F67404}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
