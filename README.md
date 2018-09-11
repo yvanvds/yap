@@ -1,4 +1,4 @@
 # yap
 Yvan's Audio Patcher
 
-Webpage and Docs: https://yvanvds.github.io/yap/
+Webpage and Docs: https://yap.mutecode.com/
