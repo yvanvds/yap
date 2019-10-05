@@ -60,10 +60,14 @@ namespace YapView.Gui
 
     public void Resize(string text, SKPaint paint)
     {
-      float width = paint.MeasureText(text) + 8;
-      if (width < minWidth) width = minWidth;
-      size.Width = width;
-      rect.Size = size;
+        float width = 8;
+        if (text.Length > 0)
+        {
+            width = paint.MeasureText(text) + 8;
+        }
+        if (width < minWidth) width = minWidth;
+        size.Width = width;
+        rect.Size = size;
     }
 
     public void SetLeft(float value)
