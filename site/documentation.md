@@ -22,6 +22,7 @@ These objects are supported in yap:
 * **DSP Math**: `~+`  `~-`  `~*` `~*`
 * **Gui**: `.b` *(button)* `.t` *(toggle)* `.m` *(message)* `.slider` `.text`
 * **Flow**: `.s` *(send)* `.r` *(recieve)* `.gate` `.switch` `.route`
+* **MIDI**: `.midiout` `.noteon` `.noteoff` `.controlchange` `.polypressure` `.channelpressure` `.programchange`
 * **Conversion**: `.mtof` *(midi to frequency)* `.ftom` *(frequency to midi)*
 * **DSP Generators**: `~sine` `~saw` `~noise`
 * **DSP Filters**: `~lp` *(lowpass)* `~hp` *(highpass)* `~bp` *(bandpass)* `~vcf` 
